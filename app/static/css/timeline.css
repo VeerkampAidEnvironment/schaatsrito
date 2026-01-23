@@ -74,23 +74,30 @@ body {
 
 .timeline-date {
     position: absolute;
-    top: 50%;                   /* vertical center of the timeline item */
-    left: 50%;                  /* horizontal center of timeline line */
-    transform: translate(-50%, -50%); /* move back half width/height */
+    top: 30%;                   /* vertical center of the timeline item */
     background: var(--color-1);
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 12px;
-    z-index: 100;
+    align-items: center;       /* vertical centering */
+    justify-content: center;   /* horizontal centering */
+    text-align: center;        /* center multi-line text */
+    color: var(--color-2);
+    font-size: 14px;
+    z-index: 2;
+    line-height: 1.2;          /* compact line spacing */
+    padding: 4px;              /* small padding inside circle */
+    word-break: break-word;    /* wrap long text if needed */
 }
 
+.timeline-date.right:nth-of-type(2n) {
+    right:88%;
+}
 
-
+.timeline-date.left:nth-of-type(2n) {
+    left:88%;
+}
 
 
 /* ================== TIMELINE CARD ================== */
@@ -103,12 +110,12 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    border-top: 6px solid transparent; /* status color */
+    border-top: 24px solid transparent; /* status color */
 }
 
 /* Status accents on top border */
 .timeline-content.open {
-    border-top-color: var(--color-6);   /* aqua = open */
+    border-top-color: var(--color-3);   /* aqua = open */
 }
 
 .timeline-content.predicted {
@@ -116,7 +123,7 @@ body {
 }
 
 .timeline-content.closed {
-    border-top-color: var(--color-1);   /* lime = finished */
+    border-top-color: var(--color-6);   /* lime = finished */
 }
 
 /* ------------------ Card header ------------------ */
@@ -133,6 +140,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-size:2rem;
 }
 
 .event-gender {
@@ -172,10 +180,12 @@ body {
 
 .badge.open {
     background: var(--color-6);
+    color: white;
 }
 
 .badge.predicted {
     background: var(--color-5);
+    color: white;
 }
 
 .badge.closed {
@@ -204,12 +214,12 @@ body {
 .predict-btn {
     background: var(--color-5);
     color: #fff;
-    border-color: var(--color-5);
+    border-color: var(--color-1);
 }
 
 .predict-btn:hover {
-    background: #fff;
-    color: var(--color-5);
+    background: var(--color-3);
+    color: var(--color-1);
     transform: translateY(-2px);
 }
 
@@ -319,7 +329,7 @@ body {
 
 .gender-title {
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: #ccc;
     margin-bottom: 4px;
     text-align: center;
@@ -335,5 +345,12 @@ body {
     border-radius: 50px;
     background: var(--color-2);
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.card-status-wrapper {
+    display: flex;           /* side-by-side layout */
+    align-items: center;     /* vertical center */
+    gap: 10px;               /* space between timer and badge */
+
 }
 

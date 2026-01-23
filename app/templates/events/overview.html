@@ -76,8 +76,6 @@
 
     <div id="event-{{ event.id }}" class="timeline-item {% if loop.index is even %}right{% else %}left{% endif %}">
 
-
-
         <div class="timeline-content
             {% if event.id in user_predictions %} predicted
             {% elif event.start_datetime < now %} closed
@@ -91,12 +89,13 @@
                 <span class="event-gender">{{ gender }}</span>
             </div>
 
+
+            <div class="card-status-wrapper">
             <!-- Event status & timer -->
             <div class="card-status">
                 {% if event.start_datetime < now %}
                     <span class="status-text">Event finished</span>
                 {% else %}
-                    <span class="status-text">Open for prediction</span>
                     <span class="countdown-timer timer"
                           data-start="{{ event.start_datetime.timestamp()|float }}"
                           data-now="{{ now.timestamp()|float }}"></span>
@@ -113,16 +112,26 @@
                     <span class="badge open">No prediction yet</span>
                 </div>
             {% endif %}
-
+            </div>
             <!-- Action button -->
             <a class="btn {% if event.start_datetime < now %}result-btn{% else %}predict-btn{% endif %}"
                href="{{ url_for('events.event_detail', event_id=event.id) }}">
                 {% if event.start_datetime < now %}
                     🏁 See result
                 {% else %}
+
+                {% if event.id in user_predictions %}
+                    🖉️ Change prediction
+                {% else %}
                     ✍️ Make prediction
                 {% endif %}
+
+                {% endif %}
             </a>
+        </div>
+                <!-- Timeline Dot / Date -->
+        <div class="timeline-date {% if loop.index is even %}right{% else %}left{% endif %}" data-timestamp="{{ event.start_datetime.timestamp() }}">
+            {{ event.start_datetime.strftime('%d %b %Y - %H:%M') }}
         </div>
     </div>
     {% endfor %}

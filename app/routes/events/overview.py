@@ -6,6 +6,7 @@ from . import events_bp
 
 now = datetime.utcnow()
 
+
 @events_bp.route("/events")
 @login_required
 def events_overview():

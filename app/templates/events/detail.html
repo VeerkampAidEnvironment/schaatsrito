@@ -94,7 +94,7 @@
       <div class="result-position">{{ row.position }}</div>
       <div class="result-photo">
         {% if row.rider.photo %}
-          <img src="row.rider.photo"  alt="{{ row.rider.name }}">
+          <img src="{{row.rider.photo}}"  alt="{{ row.rider.name }}">
         {% else %}
           <div class="photo-placeholder"></div>
         {% endif %}
@@ -102,7 +102,11 @@
       <div class="time">{{row.endtime }}</div>
 
       <div class="result-info">
-          <div class="result-name">{{ row.rider.name }}<img src="https://live.isuresults.eu/assets/images/flags/{{ rider.country }}.svg" height="10px"></div>
+          <div class="result-name">
+            {{ row.rider.name }}
+            <img src="https://live.isuresults.eu/assets/images/flags/{{ row.rider.country }}.svg" height="10px">
+            {{ row.end_time }}
+          </div>
 
           {% if row.rider.id == prediction.rider_1_id %}
             {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
