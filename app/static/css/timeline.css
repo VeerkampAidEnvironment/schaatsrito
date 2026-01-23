@@ -1,0 +1,320 @@
+/* ================== GLOBAL ================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--color-4);          /* dark teal background */
+    font-family: Arial, sans-serif;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+}
+
+.page-title {
+    text-align: center;
+    margin: 30px 0;
+}
+
+/* ================== TIMELINE ================== */
+.timeline {
+    position: relative;
+    width: 80%;
+    margin: auto;
+    padding: 40px 0;
+    margin-top: 15px; /* ensure nav does not overlap */
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 3px;
+    height: 100%;
+    border-left: 7px dotted var(--color-6);   /* dotted vertical line */
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    width: 50%;
+    padding: 20px 40px;
+    position: relative;
+}
+
+.timeline-item.left {
+    left: 3%;
+    text-align: right;
+}
+
+.timeline-item.right {
+    left: 48%;
+    text-align: left;
+}
+
+.timeline-date {
+    position: absolute;
+    top: 50%;                   /* vertical center of the timeline item */
+    left: 50%;                  /* horizontal center of timeline line */
+    transform: translate(-50%, -50%); /* move back half width/height */
+    background: var(--color-1);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    z-index: 100;
+}
+
+
+
+
+
+/* ================== TIMELINE CARD ================== */
+.timeline-content {
+    background: var(--color-2); /* soft mint */
+    color: var(--color-1);
+    padding: 20px 25px;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 6px solid transparent; /* status color */
+}
+
+/* Status accents on top border */
+.timeline-content.open {
+    border-top-color: var(--color-6);   /* aqua = open */
+}
+
+.timeline-content.predicted {
+    border-top-color: var(--color-5);   /* green = success */
+}
+
+.timeline-content.closed {
+    border-top-color: var(--color-1);   /* lime = finished */
+}
+
+/* ------------------ Card header ------------------ */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-1);
+}
+
+.event-name {
+    max-width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.event-gender {
+    font-size: 1.2rem;
+    color: var(--color-1);
+}
+
+/* ------------------ Card status / countdown ------------------ */
+.card-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #444;
+}
+
+.countdown-timer {
+    background: var(--color-6);
+    color: #fff;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* ------------------ Prediction badge ------------------ */
+.card-prediction {
+    margin-top: 4px;
+}
+
+.card-prediction .badge {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.badge.open {
+    background: var(--color-6);
+}
+
+.badge.predicted {
+    background: var(--color-5);
+}
+
+.badge.closed {
+    background: var(--color-3);
+    color: #fff;
+}
+
+/* ------------------ Buttons ------------------ */
+.btn {
+    margin-top: auto;
+    padding: 10px 14px;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+/* Prediction button (green-ish) */
+.predict-btn {
+    background: var(--color-5);
+    color: #fff;
+    border-color: var(--color-5);
+}
+
+.predict-btn:hover {
+    background: #fff;
+    color: var(--color-5);
+    transform: translateY(-2px);
+}
+
+/* Result button (blue-ish) */
+.result-btn {
+    background: var(--color-1);
+    color: #fff;
+    border-color: var(--color-1);
+}
+
+.result-btn:hover {
+    background: #fff;
+    color: var(--color-1);
+    transform: translateY(-2px);
+}
+
+/* ================== STICKY EVENT NAV ================== */
+.event-nav-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: transparent;
+    padding: 15px 0;
+}
+
+.event-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    margin: 0 auto;
+    max-width: 100%;
+    background: var(--color-2);
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+/* Event nav links */
+.event-nav a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #ddd;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.event-nav a.active {
+    background: #007BFF;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
+}
+
+.event-nav a:hover {
+    background: #007BFF;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Navigation state colors */
+.event-nav a.started {
+    background: red;
+    color: #fff;
+}
+
+.event-nav a.predicted {
+    background: var(--color-5);
+    color: #fff;
+}
+
+.event-nav a.open {
+    background: var(--color-1);
+    color: #fff;
+}
+
+.event-nav a.started:hover,
+.event-nav a.predicted:hover,
+.event-nav a.open:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.flipdown {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    --flipdown-bg-color: #222;
+    --flipdown-digit-bg: #333;
+    --flipdown-digit-color: #fff;
+    --flipdown-shadow-color: rgba(0,0,0,0.2);
+}
+.flipdown .flipdown__group {
+    padding: 6px;
+}
+.ended-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-3);
+}
+
+.event-gender-section {
+    margin-bottom: 12px;
+}
+
+.gender-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+/* Reuse existing .event-nav styles */
+.event-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 50px;
+    background: var(--color-2);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+

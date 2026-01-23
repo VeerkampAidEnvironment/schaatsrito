@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- FlipDown Retro Flipping Countdown -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flipdown@0.3.2/dist/flipdown.min.css" />
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/timeline.css') }}">
+
+<script src="https://cdn.jsdelivr.net/npm/flipdown@0.3.2/dist/flipdown.min.js"></script>
+
+<!-- Sticky Event Navigation Bar -->
+<div class="event-nav-wrapper">
+
+    <!-- Men -->
+    <div class="event-gender-section">
+        <div class="gender-title">Men</div>
+        <div class="event-nav">
+            {% for event in events %}
+                {% set event_name, gender = event.name.rsplit(' ', 1) %}
+                {% if gender == 'Men' %}
+                    <a href="#event-{{ event.id }}"
+                       data-target="event-{{ event.id }}"
+                       class="event-link
+                       {% if event.start_datetime < now %}started
+                       {% elif event.id in user_predictions %}predicted
+                       {% else %}open
+                       {% endif %}">
+                        {% if event.start_datetime < now %}
+                            🏁
+                        {% elif event.id in user_predictions %}
+                            ✅
+                        {% else %}
+                            ⏳
+                        {% endif %}
+                        {{ event_name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Women -->
+    <div class="event-gender-section">
+        <div class="gender-title">Women</div>
+        <div class="event-nav">
+            {% for event in events %}
+                {% set event_name, gender = event.name.rsplit(' ', 1) %}
+                {% if gender == 'Women' %}
+                    <a href="#event-{{ event.id }}"
+                       data-target="event-{{ event.id }}"
+                       class="event-link
+                       {% if event.start_datetime < now %}started
+                       {% elif event.id in user_predictions %}predicted
+                       {% else %}open
+                       {% endif %}">
+                        {% if event.start_datetime < now %}
+                            🏁
+                        {% elif event.id in user_predictions %}
+                            ✅
+                        {% else %}
+                            ⏳
+                        {% endif %}
+                        {{ event_name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+<div class="timeline">
+
+    {% for event in events %}
+
+    <div id="event-{{ event.id }}" class="timeline-item {% if loop.index is even %}right{% else %}left{% endif %}">
+
+
+
+        <div class="timeline-content
+            {% if event.id in user_predictions %} predicted
+            {% elif event.start_datetime < now %} closed
+            {% else %} open
+            {% endif %}">
+
+            <!-- Top row: Event name (left) & Gender (right) -->
+            {% set event_name, gender = event.name.rsplit(' ', 1) %}
+            <div class="card-header">
+                <span class="event-name">{{ event_name }}</span>
+                <span class="event-gender">{{ gender }}</span>
+            </div>
+
+            <!-- Event status & timer -->
+            <div class="card-status">
+                {% if event.start_datetime < now %}
+                    <span class="status-text">Event finished</span>
+                {% else %}
+                    <span class="status-text">Open for prediction</span>
+                    <span class="countdown-timer timer"
+                          data-start="{{ event.start_datetime.timestamp()|float }}"
+                          data-now="{{ now.timestamp()|float }}"></span>
+                {% endif %}
+            </div>
+
+            <!-- Prediction status -->
+            {% if event.id in user_predictions %}
+                <div class="card-prediction">
+                    <span class="badge predicted">Prediction submitted</span>
+                </div>
+            {% elif event.start_datetime >= now %}
+                <div class="card-prediction">
+                    <span class="badge open">No prediction yet</span>
+                </div>
+            {% endif %}
+
+            <!-- Action button -->
+            <a class="btn {% if event.start_datetime < now %}result-btn{% else %}predict-btn{% endif %}"
+               href="{{ url_for('events.event_detail', event_id=event.id) }}">
+                {% if event.start_datetime < now %}
+                    🏁 See result
+                {% else %}
+                    ✍️ Make prediction
+                {% endif %}
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Timer Script -->
+<script>
+function initTimers() {
+    const timers = document.querySelectorAll('.timer');
+
+    timers.forEach(timerEl => {
+        const startTime = new Date(parseFloat(timerEl.dataset.start) * 1000);
+        let currentTime = new Date(parseFloat(timerEl.dataset.now) * 1000);
+
+        function updateTimer() {
+            let diff = startTime - currentTime;
+
+            if (diff <= 0) {
+                timerEl.textContent = "Event started!";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -= days * 1000 * 60 * 60 * 24;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * 1000 * 60 * 60;
+            const minutes = Math.floor(diff / (1000 * 60));
+            diff -= minutes * 1000 * 60;
+            const seconds = Math.floor(diff / 1000);
+
+            timerEl.textContent =
+                (days > 0 ? days + "d " : "") +
+                (hours < 10 ? "0" : "") + hours + "h " +
+                (minutes < 10 ? "0" : "") + minutes + "m " +
+                (seconds < 10 ? "0" : "") + seconds + "s";
+
+            currentTime = new Date(currentTime.getTime() + 1000);
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", initTimers);
+</script>
+
+<!-- Smooth Scroll Script for Navigation -->
+<script>
+document.querySelectorAll('.event-nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const targetEl = document.getElementById(targetId);
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll(".event-nav a");
+    const sections = document.querySelectorAll(".timeline-item");
+
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    links.forEach(link => {
+                        link.classList.toggle(
+                            "active",
+                            link.dataset.target === id
+                        );
+                    });
+                }
+            });
+        },
+        {
+            rootMargin: "-40% 0px -50% 0px",
+            threshold: 0
+        }
+    );
+
+    sections.forEach(section => observer.observe(section));
+});
+</script>
+
+<!-- Styles -->
+<style>
+/* Sticky navigation wrapper */
+.event-nav-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: transparent;
+    padding: 15px 0;
+}
+
+.event-nav {
+    position: sticky;
+    display: flex;
+    flex-wrap: wrap;          /* 👈 allow multiple rows */
+    justify-content: center;
+    gap: 6px;
+
+    padding: 8px;
+    margin: 0 auto;
+    max-width: 100%;         /* 👈 prevents ultra-wide pills */
+
+    background: var(--color-2);
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+
+/* Individual event links */
+.event-nav a {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: #ddd;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+.event-nav a.active {
+    background: var(--color-2);
+    color: #111;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
+}
+
+.event-nav a:hover {
+    background: #007BFF;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+/* Navigation state colors */
+
+/* Events that already started */
+.event-nav a.started {
+    background: red;
+    color: #fff;
+}
+
+/* Events with prediction submitted */
+.event-nav a.predicted {
+    background: var(--color-5); /* Medium green */
+    color: #fff;
+}
+
+/* Events open for prediction */
+.event-nav a.open {
+    background: var(--color-1); /* Deep teal-blue */
+    color: #fff;
+}
+
+/* Hover polish */
+.event-nav a.started:hover,
+.event-nav a.predicted:hover,
+.event-nav a.open:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+/* Timeline spacing so nav doesn’t overlap */
+.timeline {
+    margin-top: 15px;
+}
+
+.timeline-item {
+    scroll-margin-top: 90px; /* height of your nav bar */
+}
+
+/* Optional: highlight active event link when scrolled */
+.event-nav a.active {
+    background: #007BFF;
+    color: #fff;
+}
+</style>
+
+{% endblock %}

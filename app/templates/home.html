@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">Olympic Speed Skating – Events</h1>
+
+<div class="timeline">
+
+    {% for event in events %}
+    <div class="timeline-item {% if loop.index is even %}right{% else %}left{% endif %}">
+
+        <div class="timeline-date">
+            {{ event.start_datetime.strftime('%d %b %Y') }}
+        </div>
+
+        <div class="timeline-content
+            {% if event.id in user_predictions %}
+                predicted
+            {% elif event.start_datetime < now %}
+                closed
+            {% else %}
+                open
+            {% endif %}
+        ">
+            <h3>{{ event.name }}</h3>
+            <p>{{ event.discipline }}</p>
+
+            {% if event.id in user_predictions %}
+                <span class="badge predicted">Prediction submitted</span>
+            {% elif event.start_datetime < now %}
+                <span class="badge closed">Event finished</span>
+            {% else %}
+                <span class="badge open">Open for prediction</span>
+            {% endif %}
+
+            <a class="btn" href="{{ url_for('events.event_detail', event_id=event.id) }}">
+                View event
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

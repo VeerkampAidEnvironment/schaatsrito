@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
+  <button type="submit" class="btn-submit" id="submit-btn" disabled>
+    Submit Prediction
+  </button>
+{% if future %}
+{% if not startlist_loaded %}
+  <button
+    type="button"
+    id="load-startlist-btn"
+    class="btn-submit"
+    style="margin-bottom: 1rem;"
+  >
+    Load official startlist
+  </button>
+
+  <div id="startlist-status" style="margin-bottom: 1rem;"></div>
+{% endif %}
+
+<form method="POST" id="prediction-form">
+  <!-- ================= PODIUM ================= -->
+  <div class="podium">
+    <div class="podium-slot second">
+      <span class="slot-label">2nd</span>
+      <div class="podium-card empty" data-position="2">Select rider</div>
+    </div>
+
+    <div class="podium-slot first">
+      <span class="slot-label">1st</span>
+      <div class="podium-card empty" data-position="1">Select rider</div>
+    </div>
+
+    <div class="podium-slot third">
+      <span class="slot-label">3rd</span>
+      <div class="podium-card empty" data-position="3">Select rider</div>
+    </div>
+  </div>
+
+  <!-- Hidden inputs used by backend -->
+  <input type="hidden" name="rider_1" id="rider_1">
+  <input type="hidden" name="rider_2" id="rider_2">
+  <input type="hidden" name="rider_3" id="rider_3">
+
+  <!-- ================= RIDER GRID ================= -->
+  <div class="rider-grid">
+    {% for rider in startlist %}
+    <div class="rider-card" data-id="{{ rider.id }}" data-name="{{ rider.name }}">
+      <div class="rider-photo">
+        {% if rider.profile %}
+          <img src="https://media.isuresults.eu/skater/2025/11/14/{{ rider.profile.split('/')[-1] }}.png.xs.png" alt="{{ rider.name }}">
+        {% else %}
+          <div class="photo-placeholder"></div>
+        {% endif %}
+      </div>
+      <div class="rider-name">{{ rider.name }}</div>
+      <div class="rider-buttons">
+        <button type="button" class="select-btn">Select rider</button>
+        <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.profile }}')">Profile</button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+
+</form>
+
+{% else %}
+{% if not results_loaded %}
+  <button
+    type="button"
+    id="load-results-btn"
+    class="btn-submit"
+    style="margin-bottom: 1rem;"
+  >
+    Load official results
+  </button>
+
+  <div id="results-status" style="margin-bottom: 1rem;"></div>
+{% endif %}
+
+<h2>Event Results</h2>
+
+{% if results %}
+<div class="results-container">
+  {% for row in results %}
+  <div class="result-card
+      {% if row.position == 1 %}gold{% elif row.position == 2 %}silver{% elif row.position == 3 %}bronze{% endif %}
+      {% if row.rider.id in user_rider_ids %}highlight{% endif %}
+  ">
+      <div class="result-position">{{ row.position }}</div>
+
+      <div class="result-photo">
+        {% if row.rider.profile %}
+          <img src="https://media.isuresults.eu/skater/2025/11/14/{{ row.rider.profile.split('/')[-1] }}.png.xs.png" alt="{{ row.rider.name }}">
+        {% else %}
+          <div class="photo-placeholder"></div>
+        {% endif %}
+      </div>
+
+      <div class="result-info">
+          <div class="result-name">{{ row.rider.name }}</div>
+
+          {% if row.rider.id == prediction.rider_1_id %}
+            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
+            <div class="result-points">{{ points }} pts</div>
+          {% elif row.rider.id == prediction.rider_2_id %}
+            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
+            <div class="result-points">{{ points }} pts</div>
+          {% elif row.rider.id == prediction.rider_3_id %}
+            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
+            <div class="result-points">{{ points }} pts</div>
+          {% endif %}
+
+      </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p>No results yet.</p>
+{% endif %}
+
+
+{% endif %}
+
+<!-- ================= STYLES ================= -->
+<style>
+/* ================= PAGE TITLE ================= */
+.page-title {
+  font-size: 2.5rem;           /* Prominent size for a main title */
+  font-weight: 700;             /* Bold, strong presence */
+  color: var(--color-4);        /* Dark teal for good contrast */
+  margin-bottom: 2rem;          /* Clear separation from buttons/content */
+  line-height: 1.2;
+  text-align: left;             /* Classic left-aligned title */
+  border-left: 5px solid var(--color-3); /* Optional accent bar */
+  padding-left: 1rem;           /* Space between accent bar and text */
+  letter-spacing: 0.5px;        /* Slightly spaced letters for elegance */
+  text-transform: capitalize;   /* Capitalize discipline/gender nicely */
+}
+
+/* ================= BUTTON ================= */
+#load-startlist-btn {
+  background-color: var(--color-3); /* Vibrant lime green */
+  color: white;
+  border: none;
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+#load-startlist-btn:hover {
+  background-color: var(--color-5); /* Slightly darker green on hover */
+  transform: translateY(-2px);      /* Subtle lift effect */
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+#load-startlist-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+/* Buttons */
+.btn-submit {
+    background-color: #1e88e5;
+    color: white;
+    padding: 0.7rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-submit:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+/* ================= PODIUM ================= */
+/* ================= PODIUM ================= */
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    height: 300px;
+
+    /* NEW: background image */
+    background-image: url('https://img.olympics.com/images/image/private/t_16-9_380/f_auto/primary/l3z6szynbgufcpwn56cz');
+    background-size: cover;      /* cover entire div */
+    background-position: center; /* center the image */
+    background-repeat: no-repeat;
+    padding: 2rem;               /* optional: give some padding so podium cards aren’t flush to edge */
+    border-radius: 16px;         /* optional: match card style */
+}
+
+
+.podium-slot {
+    width: 170px;
+    text-align: center;
+}
+
+.podium-slot.first {
+    transform: translateY(-25px);
+}
+
+.slot-label {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+    color:var(--color-3);
+}
+
+.podium-card {
+    background: var(--color-6);
+    border-radius: 14px;
+    padding: 1rem;
+    min-height: 180px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-1);
+}
+
+.podium-card.empty {
+    color: #999;
+    font-style: italic;
+    justify-content: center;
+}
+
+.podium-card.dragging {
+    opacity: 0.4;
+}
+
+.podium-card.drag-over {
+    outline: 2px dashed #1e88e5;
+}
+
+/* ===== PODIUM MEDAL COLORS ===== */
+.podium-card.gold {
+    border: 3px solid #ffd700;
+    background: linear-gradient(135deg, #fff8dc, #fff);
+}
+
+.podium-card.silver {
+    border: 3px solid #c0c0c0;
+    background: linear-gradient(135deg, #f5f5f5, #fff);
+}
+
+.podium-card.bronze {
+    border: 3px solid #cd7f32;
+    background: linear-gradient(135deg, #fbe6d4, #fff);
+}
+
+.podium-card img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+}
+
+.podium-card strong {
+    font-size: 1.05rem;
+}
+
+.remove-btn {
+    border: none;
+    background: none;
+    color: #d32f2f;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ================= RIDER GRID ================= */
+.rider-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.rider-card {
+  background: var(--color-2);
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.rider-card:hover {
+  transform: translateY(-10px);
+  background-color: var(--color-5);
+}
+
+.rider-photo img {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #1e88e5;
+}
+
+.rider-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--color-1);
+
+}
+
+.rider-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.3rem;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.select-btn {
+  background: var(--color-6);
+  color: white;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.select-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.profile-btn {
+  background: var(--color-3);
+  color: white;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.profile-btn:hover {
+  background: #388e3c;
+}
+
+/* ===== MODAL ===== */
+.modal {
+  display: none; /* hidden by default */
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
+  z-index: 1000;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  width: 95%;        /* almost full width */
+  height: 95%;       /* almost full height */
+  max-width: 1200px; /* optional max width for big screens */
+  max-height: 1000px; /* optional max height */
+  background-color: #fff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+#profile-frame {
+  flex-grow: 1;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+.modal-close {
+  align-self: flex-end;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+/* ===== RESULTS CONTAINER ===== */
+.results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ===== RESULT CARD ===== */
+.result-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* ===== POSITION ===== */
+.result-position {
+    font-size: 1.2rem;
+    font-weight: 700;
+    width: 2rem;
+    text-align: center;
+    color: black;
+}
+
+/* ===== RIDER PHOTO ===== */
+.result-photo img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #1e88e5;
+}
+
+.photo-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #ccc;
+}
+
+/* ===== RIDER INFO ===== */
+.result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: black;
+}
+.result-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    position: relative;
+}
+/* Points box for highlighted riders */
+.result-points {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e88e5;
+    border: 2px solid #1e88e5;
+    border-radius: 8px;
+    padding: 0.3rem 0.6rem;
+    background: #e0f7fa;
+    text-align: center;
+    min-width: 70px;
+}
+
+/* Hide points for non-highlighted riders */
+.result-card:not(.highlight) .result-points {
+    display: none;
+}
+
+/* Adjust for small screens */
+@media (max-width: 600px) {
+    .result-points {
+        font-size: 1rem;
+        padding: 0.2rem 0.5rem;
+        min-width: 50px;
+    }
+}
+
+/* ===== MEDAL COLORS ===== */
+.result-card.gold { border-left: 5px solid #ffd700; }
+.result-card.silver { border-left: 5px solid #c0c0c0; }
+.result-card.bronze { border-left: 5px solid #cd7f32; }
+
+/* ===== HIGHLIGHT USER PICK ===== */
+.result-card.highlight {
+    background-color: #e0f7fa;
+    border-left: 5px solid #1e88e5;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .results-container {
+        gap: 0.75rem;
+    }
+    .result-card {
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+    }
+    .result-photo img, .photo-placeholder {
+        width: 50px;
+        height: 50px;
+    }
+    .result-position {
+        font-size: 1rem;
+        width: 1.5rem;
+        color: black;
+    }
+}
+/* ================= PRIMARY SUBMIT BUTTON ================= */
+#submit-btn {
+  background-color: var(--color-3);  /* Vibrant lime green for primary action */
+  color: white;
+  border: none;
+  padding: 0.7rem 1.6rem;            /* Comfortable size */
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Hover effect when enabled */
+#submit-btn:not(:disabled):hover {
+  background-color: var(--color-5); /* Slightly darker green on hover */
+  transform: translateY(-2px);       /* Subtle lift */
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+/* Active effect */
+#submit-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Disabled state */
+#submit-btn:disabled {
+  background-color: #c5c5c5;         /* Soft gray for disabled */
+  color: #f0f0f0;                    /* Light text for readability */
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const selected = [];
+  const submitBtn = document.getElementById("submit-btn");
+
+  const podiumCards = {
+    1: document.querySelector('.podium-card[data-position="1"]'),
+    2: document.querySelector('.podium-card[data-position="2"]'),
+    3: document.querySelector('.podium-card[data-position="3"]'),
+  };
+
+  function updateHiddenInputs() {
+    document.getElementById('rider_1').value = selected[0] || '';
+    document.getElementById('rider_2').value = selected[1] || '';
+    document.getElementById('rider_3').value = selected[2] || '';
+    submitBtn.disabled = selected.length !== 3;
+  }
+
+  function renderPodium() {
+    const medalClass = {1: 'gold', 2: 'silver', 3: 'bronze'};
+
+    [1,2,3].forEach(pos => {
+      const card = podiumCards[pos];
+      const riderId = selected[pos - 1];
+
+      card.className = 'podium-card';
+
+      if (!riderId) {
+        card.classList.add('empty');
+        card.innerHTML = 'Select rider';
+        return;
+      }
+
+      const riderCard = document.querySelector(`.rider-card[data-id="${riderId}"]`);
+      if (!riderCard) return;
+
+      const imgSrc = riderCard.querySelector('img') ? riderCard.querySelector('img').src : '';
+      card.classList.add(medalClass[pos]);
+      card.setAttribute('draggable', 'true');
+      card.dataset.riderId = riderId;
+
+      card.innerHTML = `
+        ${imgSrc ? `<img src="${imgSrc}" alt="${riderCard.dataset.name}">` : ''}
+        <strong>${riderCard.dataset.name}</strong>
+        <button type="button" class="remove-btn" data-id="${riderId}">✕ Remove</button>
+      `;
+    });
+
+    document.querySelectorAll('.select-btn').forEach(btn => {
+      const id = btn.closest('.rider-card').dataset.id;
+      btn.disabled = selected.includes(id);
+    });
+
+    updateHiddenInputs();
+    enableDragAndDrop();
+  }
+
+  document.querySelectorAll('.select-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (selected.length >= 3) return;
+      const id = btn.closest('.rider-card').dataset.id;
+      selected.push(id);
+      renderPodium();
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.classList.contains('remove-btn')) return;
+    const id = e.target.dataset.id;
+    const index = selected.indexOf(id);
+    if (index !== -1) {
+      selected.splice(index, 1);
+      renderPodium();
+    }
+  });
+
+  function enableDragAndDrop() {
+    let draggedIndex = null;
+
+    Object.values(podiumCards).forEach((card, index) => {
+      card.addEventListener('dragstart', () => {
+        draggedIndex = index;
+        card.classList.add('dragging');
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        draggedIndex = null;
+      });
+
+      card.addEventListener('dragover', e => {
+        e.preventDefault();
+        card.classList.add('drag-over');
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+      });
+
+      card.addEventListener('drop', () => {
+        card.classList.remove('drag-over');
+        if (draggedIndex === null) return;
+
+        const targetIndex = index;
+        if (draggedIndex === targetIndex) return;
+
+        const moved = selected.splice(draggedIndex, 1)[0];
+        selected.splice(targetIndex, 0, moved);
+        renderPodium();
+      });
+    });
+  }
+
+  const profileModal = document.getElementById("profile-modal");
+  const profileFrame = document.getElementById("profile-frame");
+  const modalClose = profileModal.querySelector(".modal-close");
+
+  window.openProfileModal = function(riderId) {
+      profileFrame.src = `https://live.isuresults.eu/${riderId}`;
+      profileModal.style.display = "block";
+  }
+
+  modalClose.addEventListener("click", () => {
+      profileModal.style.display = "none";
+      profileFrame.src = "";
+  });
+
+  window.addEventListener("click", (e) => {
+      if (e.target === profileModal) {
+          profileModal.style.display = "none";
+          profileFrame.src = "";
+      }
+  });
+
+  {% if prediction %}
+    selected.push(
+      "{{ prediction.rider_1_id }}",
+      "{{ prediction.rider_2_id }}",
+      "{{ prediction.rider_3_id }}"
+    );
+    renderPodium();
+  {% endif %}
+
+});
+</script>
+<script>
+const loadBtn = document.getElementById("load-startlist-btn");
+
+if (loadBtn) {
+  loadBtn.addEventListener("click", async () => {
+    loadBtn.disabled = true;
+    loadBtn.textContent = "Loading startlist…";
+
+    const res = await fetch(
+      "{{ url_for('events.load_startlist', event_id=event.id) }}",
+      { method: "POST" }
+    );
+
+    const data = await res.json();
+    const statusEl = document.getElementById("startlist-status");
+
+    if (data.status === "loaded") {
+      statusEl.textContent = "✅ Startlist loaded. Reloading…";
+      setTimeout(() => location.reload(), 1000);
+    } else if (data.status === "not_available") {
+      statusEl.textContent = "⚠️ Startlist not yet available.";
+      loadBtn.disabled = false;
+      loadBtn.textContent = "Load official startlist";
+    } else if (data.status === "already_loaded") {
+      statusEl.textContent = "ℹ️ Startlist already loaded.";
+    }
+  });
+}
+</script>
+<script>
+  const loadResultsBtn = document.getElementById("load-results-btn");
+
+if (loadResultsBtn) {
+  loadResultsBtn.addEventListener("click", async () => {
+    loadResultsBtn.disabled = true;
+    loadResultsBtn.textContent = "Loading results…";
+
+    const res = await fetch(
+      "{{ url_for('events.load_results', event_id=event.id) }}",
+      { method: "POST" }
+    );
+
+    const data = await res.json();
+    const statusEl = document.getElementById("results-status");
+
+    if (data.status === "loaded") {
+      statusEl.textContent = "✅ Results loaded. Reloading…";
+      setTimeout(() => location.reload(), 1000);
+    } else if (data.status === "not_available") {
+      statusEl.textContent = "⚠️ Results not yet available.";
+      loadResultsBtn.disabled = false;
+      loadResultsBtn.textContent = "Load official results";
+    } else if (data.status === "already_loaded") {
+      statusEl.textContent = "ℹ️ Results already loaded.";
+    }
+  });
+}
+
+</script>
+<!-- ================= PROFILE MODAL ================= -->
+<div id="profile-modal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <iframe id="profile-frame" src="" frameborder="0"></iframe>
+  </div>
+</div>
+
+{% endblock %}
