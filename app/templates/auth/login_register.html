@@ -217,6 +217,15 @@ html, body {
 </style>
 </head>
 <body>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 
 <div class="form-structor">
   <!-- Video background -->
@@ -255,16 +264,25 @@ html, body {
 const loginBtn = document.getElementById('login');
 const signupBtn = document.getElementById('signup');
 
-loginBtn.addEventListener('click', () => {
+function showLogin() {
   document.querySelector('.signup').classList.add('slide-up');
   document.querySelector('.login').classList.remove('slide-up');
-});
+}
 
-signupBtn.addEventListener('click', () => {
+function showSignup() {
   document.querySelector('.signup').classList.remove('slide-up');
   document.querySelector('.login').classList.add('slide-up');
-});
+}
+
+loginBtn.addEventListener('click', showLogin);
+signupBtn.addEventListener('click', showSignup);
+
+// server-side flag for auto-slide
+{% if slide_to_login %}
+showLogin();
+{% endif %}
 </script>
+
 
 </body>
 </html>
