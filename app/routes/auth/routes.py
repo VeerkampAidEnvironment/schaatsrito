@@ -7,7 +7,7 @@ from app import db
 auth_bp = Blueprint("auth", __name__)
 
 # Only letters, numbers, underscores; 3-20 characters
-USERNAME_REGEX = r"^[A-Za-z0-9_]{3,20}$"
+USERNAME_REGEX = r"^[A-Za-z0-9_ ]{3,20}$"
 
 @auth_bp.route("/", methods=["GET", "POST"])
 def login_register():

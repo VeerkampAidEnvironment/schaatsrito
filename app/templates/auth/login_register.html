@@ -259,6 +259,33 @@ html, body {
 </div>
 
 </div>
+<style>
+.flash-messages {
+  width: 350px;
+  margin: 0 auto 15px auto;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+}
+
+.flash {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.flash.error {
+  background-color: #ffcccc;
+  color: #900;
+}
+
+.flash.success {
+  background-color: #ccffcc;
+  color: #090;
+}
+</style>
 
 <script>
 const loginBtn = document.getElementById('login');
