@@ -55,7 +55,8 @@
           <div class="photo-placeholder"></div>
         {% endif %}
       </div>
-      <div class="rider-name">{{ rider.name }}</div>
+      <div class="rider-name">{{ rider.name }}
+      <img src="https://live.isuresults.eu/assets/images/flags/{{ rider.country }}.svg" height="10px"></div>
       <div class="rider-buttons">
         <button type="button" class="select-btn">Select rider</button>
         <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.profile }}')">Profile</button>
@@ -91,17 +92,17 @@
       {% if row.rider.id in user_rider_ids %}highlight{% endif %}
   ">
       <div class="result-position">{{ row.position }}</div>
-
       <div class="result-photo">
-        {% if row.rider.profile %}
-          <img src="https://media.isuresults.eu/skater/2025/11/14/{{ row.rider.profile.split('/')[-1] }}.png.xs.png" alt="{{ row.rider.name }}">
+        {% if row.rider.photo %}
+          <img src="row.rider.photo"  alt="{{ row.rider.name }}">
         {% else %}
           <div class="photo-placeholder"></div>
         {% endif %}
       </div>
+      <div class="time">{{row.endtime }}</div>
 
       <div class="result-info">
-          <div class="result-name">{{ row.rider.name }}</div>
+          <div class="result-name">{{ row.rider.name }}<img src="https://live.isuresults.eu/assets/images/flags/{{ rider.country }}.svg" height="10px"></div>
 
           {% if row.rider.id == prediction.rider_1_id %}
             {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
@@ -299,6 +300,27 @@
   align-items: center;
   gap: 0.5rem;
   transition: transform 0.2s;
+}
+.rider-card.selected {
+  position: relative;
+  /* dark semi-transparent overlay */
+  background-color: var(--color-2);
+  opacity: 0.4;
+  color: #fff;
+}
+
+/* Optional: overlay icon or text */
+.rider-card.selected::after {
+  content: "Selected";
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255,255,255,0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-4);
 }
 
 .rider-card:hover {
@@ -618,6 +640,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = btn.closest('.rider-card').dataset.id;
       btn.disabled = selected.includes(id);
     });
+
+        document.querySelectorAll('.rider-card').forEach(card => {
+      const id = card.dataset.id;
+      if (selected.includes(id)) {
+        card.classList.add('selected');  // <-- add this class
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+
 
     updateHiddenInputs();
     enableDragAndDrop();

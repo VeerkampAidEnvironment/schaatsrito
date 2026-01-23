@@ -35,7 +35,7 @@ EVENTS = [
         "name": "1500 m Men",
         "discipline": "1500 m",
         "start_datetime": "2026-01-23T20:17:00",
-        "gender": "F"
+        "gender": "M"
 
     },
 

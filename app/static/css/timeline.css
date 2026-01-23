@@ -24,17 +24,18 @@ body {
     width: 80%;
     margin: auto;
     padding: 40px 0;
-    margin-top: 15px; /* ensure nav does not overlap */
 }
 
 .timeline::before {
     content: '';
     position: absolute;
+    top: 0;
+    bottom: 0;
     left: 50%;
     width: 3px;
-    height: 100%;
-    border-left: 7px dotted var(--color-6);   /* dotted vertical line */
+    border-left: 7px dotted var(--color-6);
     transform: translateX(-50%);
+    z-index: 0;
 }
 
 .timeline-item {
@@ -43,15 +44,33 @@ body {
     position: relative;
 }
 
+/* Left side items */
 .timeline-item.left {
-    left: 3%;
+    left: 0;
     text-align: right;
 }
 
+/* Right side items */
 .timeline-item.right {
-    left: 48%;
+    left: 50%;
     text-align: left;
 }
+
+/* Add staggered vertical offsets */
+.timeline-item.right:nth-of-type(2n) {
+    margin-top: -80px; /* pushes right items down relative to left above */
+}
+
+.timeline-item.left:nth-of-type(2n+1) {
+    margin-top: -80px; /* pushes left items down relative to right above */
+}
+
+/* Make sure timeline-content is above the line */
+.timeline-item .timeline-content {
+    position: relative;
+    z-index: 1;
+}
+
 
 .timeline-date {
     position: absolute;
