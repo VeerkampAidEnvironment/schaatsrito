@@ -2,9 +2,7 @@
 {% block content %}
 
 <h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
-  <button type="submit" class="btn-submit" id="submit-btn" disabled>
-    Submit Prediction
-  </button>
+
 {% if future %}
 {% if not startlist_loaded %}
   <button
@@ -20,6 +18,9 @@
 {% endif %}
 
 <form method="POST" id="prediction-form">
+    <button type="submit" class="btn-submit" id="submit-btn" disabled>
+    Submit Prediction
+  </button>
   <!-- ================= PODIUM ================= -->
   <div class="podium">
     <div class="podium-slot second">
@@ -48,8 +49,8 @@
     {% for rider in startlist %}
     <div class="rider-card" data-id="{{ rider.id }}" data-name="{{ rider.name }}">
       <div class="rider-photo">
-        {% if rider.profile %}
-          <img src="https://media.isuresults.eu/skater/2025/11/14/{{ rider.profile.split('/')[-1] }}.png.xs.png" alt="{{ rider.name }}">
+        {% if rider.photo %}
+          <img src="{{ rider.photo }}" alt="{{ rider.name }}">
         {% else %}
           <div class="photo-placeholder"></div>
         {% endif %}

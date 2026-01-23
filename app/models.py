@@ -22,6 +22,8 @@ class Rider(db.Model):
     country = db.Column(db.String(3), nullable=True)
     profile = db.Column(db.String(64), nullable=True)
     gender = db.Column(db.String(10), nullable=True)
+    photo = db.Column(db.String(255))  # <-- NEW: photo URL
+
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,6 +54,8 @@ class EventResult(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     rider_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
     position = db.Column(db.Integer, nullable=False)
+    end_time = db.Column(db.Float, nullable=True)
+
 
     rider = db.relationship(
         "Rider",
