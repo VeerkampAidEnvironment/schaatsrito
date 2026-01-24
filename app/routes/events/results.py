@@ -11,7 +11,9 @@ import requests
 @login_required
 def load_results(event_id):
     event = Event.query.get_or_404(event_id)
-    if event.results:
+
+    # Block if event is final
+    if getattr(event, "final", False):
         return jsonify({"status": "already_loaded"})
 
     event_code = current_app.config["EVENT_CODE"]
@@ -27,16 +29,10 @@ def load_results(event_id):
     if not data:
         return jsonify({"status": "not_available"})
 
-    # Remove existing results for idempotency
-    EventResult.query.filter_by(event_id=event.id).delete()
-
     added = 0
     position = 1
 
-    # Sort competitors by rank (just in case)
-    sorted_competitors = sorted(data, key=lambda x: x.get("rank", 9999))
-
-    for entry in sorted_competitors:
+    for entry in data:
         skater = entry.get("competitor", {}).get("skater")
         if not skater:
             continue
@@ -45,27 +41,33 @@ def load_results(event_id):
         if not rider:
             continue
 
-        # Convert time string to float
-        time_str = entry.get("time")
-        try:
-            end_time = float(time_str) if time_str else None
-        except ValueError:
-            end_time = None
+        # Store time exactly as received
+        formatted_time = entry.get("time")
 
-        db.session.add(
-            EventResult(
-                event_id=event.id,
-                rider_id=rider.id,
-                position=position,
-                end_time=end_time,
+        # Check existing result
+        existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=rider.id).first()
+        if existing_result:
+            existing_result.position = position
+            existing_result.end_time = formatted_time
+        else:
+            db.session.add(
+                EventResult(
+                    event_id=event.id,
+                    rider_id=rider.id,
+                    position=position,
+                    end_time=formatted_time,
+                )
             )
-        )
 
         added += 1
         position += 1
 
-    if added > 0:
-        db.session.commit()
-        return jsonify({"status": "loaded"})
+    db.session.commit()
 
-    return jsonify({"status": "not_available"})
+    # Mark event final if all competitors have results
+    if added == len(data):
+        event.final = True
+        db.session.commit()
+        return jsonify({"status": "loaded_final"})
+
+    return jsonify({"status": "loaded_partial"})

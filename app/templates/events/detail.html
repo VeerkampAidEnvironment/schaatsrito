@@ -4,6 +4,16 @@
 <h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
 
 {% if future %}
+  {% if prediction %}
+    <div class="prediction-status submitted">
+      ✅ You have submitted your prediction.
+    </div>
+  {% else %}
+    <div class="prediction-status not-submitted">
+      ⚠️ You have not submitted a prediction yet.
+    </div>
+  {% endif %}
+
 {% if not startlist_loaded %}
   <button
     type="button"
@@ -59,7 +69,7 @@
       <img src="https://live.isuresults.eu/assets/images/flags/{{ rider.country }}.svg" height="10px"></div>
       <div class="rider-buttons">
         <button type="button" class="select-btn">Select rider</button>
-        <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.profile }}')">Profile</button>
+        <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.id }}')">Profile</button>
       </div>
     </div>
     {% endfor %}
@@ -67,8 +77,8 @@
 
 
 </form>
-
 {% else %}
+
 {% if not results_loaded %}
   <button
     type="button"
@@ -76,13 +86,19 @@
     class="btn-submit"
     style="margin-bottom: 1rem;"
   >
-    Load official results
+    {% if results %}
+      Update results
+    {% else %}
+      Load official results
+    {% endif %}
   </button>
 
-  <div id="results-status" style="margin-bottom: 1rem;"></div>
+  <div id="results-status" style="margin-bottom: 1rem;">
+    {% if results and not event.final %}
+      ⚠️ Results are not final yet.
+    {% endif %}
+  </div>
 {% endif %}
-
-<h2>Event Results</h2>
 
 {% if results %}
 <div class="results-container">
@@ -94,37 +110,31 @@
       <div class="result-position">{{ row.position }}</div>
       <div class="result-photo">
         {% if row.rider.photo %}
-          <img src="{{row.rider.photo}}"  alt="{{ row.rider.name }}">
+          <img src="{{ row.rider.photo }}"  alt="{{ row.rider.name }}">
         {% else %}
           <div class="photo-placeholder"></div>
         {% endif %}
       </div>
-      <div class="time">{{row.endtime }}</div>
+      <div class="time">{{ row.endtime }}</div>
 
       <div class="result-info">
           <div class="result-name">
             {{ row.rider.name }}
             <img src="https://live.isuresults.eu/assets/images/flags/{{ row.rider.country }}.svg" height="10px">
+          </div>
+          <div class="result-time">
             {{ row.end_time }}
           </div>
 
-          {% if row.rider.id == prediction.rider_1_id %}
-            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
-            <div class="result-points">{{ points }} pts</div>
-          {% elif row.rider.id == prediction.rider_2_id %}
-            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
-            <div class="result-points">{{ points }} pts</div>
-          {% elif row.rider.id == prediction.rider_3_id %}
-            {% set points = 3 if row.position == 1 else 2 if row.position == 2 else 1 if row.position == 3 else 0 %}
+          {% if row.rider.id in [prediction.rider_1_id, prediction.rider_2_id, prediction.rider_3_id] %}
+            {% set pos = row.position %}
+            {% set points = 3 if pos == 1 else 2 if pos == 2 else 1 if pos == 3 else 0 %}
             <div class="result-points">{{ points }} pts</div>
           {% endif %}
-
       </div>
   </div>
   {% endfor %}
 </div>
-{% else %}
-<p>No results yet.</p>
 {% endif %}
 
 
@@ -134,9 +144,9 @@
 <style>
 /* ================= PAGE TITLE ================= */
 .page-title {
-  font-size: 2.5rem;           /* Prominent size for a main title */
+  font-size: 5rem;           /* Prominent size for a main title */
   font-weight: 700;             /* Bold, strong presence */
-  color: var(--color-4);        /* Dark teal for good contrast */
+  color: var(--color-2);        /* Dark teal for good contrast */
   margin-bottom: 2rem;          /* Clear separation from buttons/content */
   line-height: 1.2;
   text-align: left;             /* Classic left-aligned title */
@@ -440,9 +450,10 @@
     gap: 1rem;
     padding: 0.75rem 1rem;
     border-radius: 12px;
-    background: #fff;
+    background: var(--alabaster-grey);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 15px solid var(--color-6);
 }
 
 .result-card:hover {
@@ -484,8 +495,12 @@
 .result-name {
     font-weight: 600;
     font-size: 1rem;
-    color: black;
+    color: var(--medium-jungle);
 }
+.result-time {
+  color: var(--black);
+ }
+
 .result-info {
     display: flex;
     flex-direction: column;
@@ -524,14 +539,13 @@
 }
 
 /* ===== MEDAL COLORS ===== */
-.result-card.gold { border-left: 5px solid #ffd700; }
-.result-card.silver { border-left: 5px solid #c0c0c0; }
-.result-card.bronze { border-left: 5px solid #cd7f32; }
+.result-card.gold { border-left: 15px solid #ffd700; }
+.result-card.silver { border-left: 15px solid #c0c0c0; }
+.result-card.bronze { border-left: 15px solid #cd7f32; }
 
 /* ===== HIGHLIGHT USER PICK ===== */
 .result-card.highlight {
-    background-color: #e0f7fa;
-    border-left: 5px solid #1e88e5;
+    background-color: var(--powder-blue);
 }
 
 /* RESPONSIVE */
@@ -587,6 +601,81 @@
   cursor: not-allowed;
   box-shadow: none;
   transform: none;
+}
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background:
+        /* soft curved light streaks */
+        linear-gradient(
+            140deg,
+            transparent 35%,
+            rgba(255,255,255,0.18) 42%,
+            transparent 50%
+        ),
+        linear-gradient(
+            300deg,
+            transparent 30%,
+            rgba(200,255,255,0.12) 38%,
+            transparent 45%
+        ),
+
+        /* neon lime bloom */
+        radial-gradient(
+            55% 45% at 65% 55%,
+            rgba(150, 255, 130, 0.38),
+            transparent 68%
+        ),
+
+        /* aqua sweep */
+        radial-gradient(
+            65% 40% at 30% 65%,
+            rgba(70, 210, 220, 0.5),
+            transparent 72%
+        ),
+
+        /* deep base ocean */
+        linear-gradient(
+            160deg,
+            #063f4a 0%,
+            #075f66 35%,
+            #0a7b74 60%,
+            #1a8b5a 100%
+        );
+
+    background-attachment: fixed;
+    background-blend-mode: screen, screen, lighten, lighten, normal;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+
+    mix-blend-mode: soft-light;
+    opacity: 0.25;
+}
+.prediction-status {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.prediction-status.submitted {
+  background-color: #dcedc8; /* light green */
+  color: #33691e;
+}
+
+.prediction-status.not-submitted {
+  background-color: #fff3e0; /* light orange */
+  color: #e65100;
 }
 
 </style>
@@ -720,8 +809,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalClose = profileModal.querySelector(".modal-close");
 
   window.openProfileModal = function(riderId) {
-      profileFrame.src = `https://live.isuresults.eu/${riderId}`;
-      profileModal.style.display = "block";
+    const url = `https://live.isuresults.eu/profiles/${riderId}`;
+    console.log("Profile URL:", url);   // 👈 print it
+    profileFrame.src = url;
+    profileModal.style.display = "flex";
   }
 
   modalClose.addEventListener("click", () => {
@@ -777,7 +868,7 @@ if (loadBtn) {
 }
 </script>
 <script>
-  const loadResultsBtn = document.getElementById("load-results-btn");
+const loadResultsBtn = document.getElementById("load-results-btn");
 
 if (loadResultsBtn) {
   loadResultsBtn.addEventListener("click", async () => {
@@ -792,19 +883,33 @@ if (loadResultsBtn) {
     const data = await res.json();
     const statusEl = document.getElementById("results-status");
 
-    if (data.status === "loaded") {
-      statusEl.textContent = "✅ Results loaded. Reloading…";
+    if (data.status === "loaded_final") {
+      // Final results, hide button
+      statusEl.textContent = "✅ Final results loaded.";
+      loadResultsBtn.style.display = "none";
+      setTimeout(() => location.reload(), 1000);
+    } else if (data.status === "loaded_partial") {
+      // Partial results, update button text
+      statusEl.textContent = "⚠️ Results are not final yet.";
+      loadResultsBtn.disabled = false;
+      loadResultsBtn.textContent = "Update results";
       setTimeout(() => location.reload(), 1000);
     } else if (data.status === "not_available") {
       statusEl.textContent = "⚠️ Results not yet available.";
       loadResultsBtn.disabled = false;
       loadResultsBtn.textContent = "Load official results";
     } else if (data.status === "already_loaded") {
-      statusEl.textContent = "ℹ️ Results already loaded.";
+      if (data.final) {
+        statusEl.textContent = "✅ Final results already loaded.";
+        loadResultsBtn.style.display = "none";
+      } else {
+        statusEl.textContent = "⚠️ Partial results already loaded.";
+        loadResultsBtn.disabled = false;
+        loadResultsBtn.textContent = "Update results";
+      }
     }
   });
 }
-
 </script>
 <!-- ================= PROFILE MODAL ================= -->
 <div id="profile-modal" class="modal">

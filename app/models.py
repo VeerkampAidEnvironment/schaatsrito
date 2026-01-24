@@ -34,6 +34,8 @@ class Event(db.Model):
     startlist = db.relationship("EventStartlist", backref="event", lazy=True)
     results = db.relationship("EventResult", backref="event", lazy=True)
     predictions = db.relationship("Prediction", backref="event", lazy=True)
+    results_final = db.Column(db.Boolean, default=False)
+
 
 class EventStartlist(db.Model):
     __tablename__ = "event_startlist"
@@ -54,7 +56,7 @@ class EventResult(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
     rider_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
     position = db.Column(db.Integer, nullable=False)
-    end_time = db.Column(db.Float, nullable=True)
+    end_time = db.Column(db.String(20))  # <-- change from Float to String
 
 
     rider = db.relationship(

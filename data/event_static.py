@@ -52,7 +52,7 @@ EVENTS = [
         "name": "1000 m Men",
         "discipline": "1000 m",
         "start_datetime": "2026-01-24T15:03:00",
-        "gender": "F"
+        "gender": "M"
 },
     {
         "id": 15,
@@ -66,7 +66,7 @@ EVENTS = [
         "name": "5000 m Men",
         "discipline": "5000 m",
         "start_datetime": "2026-01-24T16:52:00",
-        "gender": "F"
+        "gender": "M"
     },
     # --- Day 3: Sunday, 25 Jan 2026 ---
     {
@@ -81,7 +81,7 @@ EVENTS = [
         "name": "Mass Start Men",
         "discipline": "Mass Start",
         "start_datetime": "2026-01-25T15:42:00",
-        "gender": "F"
+        "gender": "M"
     },
     {
         "id": 25,
@@ -95,6 +95,6 @@ EVENTS = [
         "name": "Team Sprint Men",
         "discipline": "Team Sprint",
         "start_datetime": "2026-01-25T16:40:00",
-        "gender": "F"
+        "gender": "M"
     },
 ]

@@ -4,12 +4,12 @@ from app.models import Event, Prediction
 from datetime import datetime
 from . import events_bp
 
-now = datetime.utcnow()
 
 
 @events_bp.route("/events")
 @login_required
 def events_overview():
+    now = datetime.utcnow()
     events = Event.query.order_by(Event.start_datetime).all()
     user_predictions = {p.event_id for p in Prediction.query.filter_by(user_id=current_user.id)}
 
