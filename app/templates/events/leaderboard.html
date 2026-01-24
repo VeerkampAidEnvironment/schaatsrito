@@ -404,6 +404,8 @@ const CURRENT_USER_ID = {{ current_user_id }};
 
 <!-- ================= SCRIPT ================= -->
 <script>
+
+
 const viewToggle = document.getElementById("viewToggle");
 
 viewToggle.addEventListener("change", () => {
@@ -418,20 +420,6 @@ viewToggle.addEventListener("change", () => {
     }
 });
 
-
-rankingBtn.onclick = () => {
-    rankingView.style.display = "block";
-    tableView.style.display = "none";
-    rankingBtn.classList.add("active");
-    tableBtn.classList.remove("active");
-};
-
-tableBtn.onclick = () => {
-    rankingView.style.display = "none";
-    tableView.style.display = "block";
-    tableBtn.classList.add("active");
-    rankingBtn.classList.remove("active");
-};
 
 // Modal logic
 const modal = document.getElementById("scoreModal");
