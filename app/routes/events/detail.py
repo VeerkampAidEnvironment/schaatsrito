@@ -5,12 +5,13 @@ from app import db
 from . import events_bp
 from datetime import datetime
 
-now = datetime.utcnow()
 
 @events_bp.route("/events/<int:event_id>", methods=["GET", "POST"])
 @login_required
 def event_detail(event_id):
     event = Event.query.get_or_404(event_id)
+    now = datetime.utcnow()
+
     prediction = Prediction.query.filter_by(user_id=current_user.id, event_id=event.id).first()
 
     # FUTURE EVENT: allow prediction
@@ -47,7 +48,6 @@ def event_detail(event_id):
                 db.session.add(prediction)
 
             db.session.commit()
-            flash("Prediction submitted!", "success")
             return redirect(url_for("events.event_detail", event_id=event.id))
 
         return render_template(

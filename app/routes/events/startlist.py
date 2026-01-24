@@ -15,9 +15,8 @@ def load_startlist(event_id):
         return jsonify({"status": "already_loaded"})
 
     api_url = f"https://api.isuresults.eu/events/2026_{event_code}/competitions/{event.id}/start-list/"
-
     try:
-        resp = requests.get(api_url, timeout=10)
+        resp = requests.get(api_url, timeout=15)
         resp.raise_for_status()
         data = resp.json()
     except Exception as e:
@@ -26,7 +25,7 @@ def load_startlist(event_id):
     added = 0
 
     for entry in data:
-        if entry.get("type") == "ind":
+        if entry.get("type") in ("ind", "ms"):
             # Individual event: same as before
             competitor = entry.get("competitor")
             if not competitor or not competitor.get("skater"):

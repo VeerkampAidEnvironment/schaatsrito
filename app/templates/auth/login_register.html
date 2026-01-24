@@ -217,6 +217,9 @@ html, body {
 </style>
 </head>
 <body>
+
+
+<div class="form-structor">
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
     <div class="flash-messages">
@@ -226,8 +229,6 @@ html, body {
     </div>
   {% endif %}
 {% endwith %}
-
-<div class="form-structor">
   <!-- Video background -->
   <video class="bg-video" autoplay muted loop playsinline>
       <source src="{{ url_for('static', filename='videos/21Bh1tre7vej2LwVt7sweLLjLSpcmFmg.mp4') }}" type="video/mp4">

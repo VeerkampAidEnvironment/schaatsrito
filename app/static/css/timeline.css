@@ -212,11 +212,12 @@ body::before {
 
 .countdown-timer {
     background: var(--color-6);
-    color: #fff;
+    color: var(--alabaster-grey);
     font-weight: 600;
     padding: 2px 8px;
     border-radius: 4px;
     font-family: monospace;
+    border: solid 2px var(--color-1);
 }
 
 /* ------------------ Prediction badge ------------------ */
@@ -407,7 +408,7 @@ body::before {
 .card-status-wrapper {
     display: flex;           /* side-by-side layout */
     align-items: center;     /* vertical center */
-    gap: 10px;               /* space between timer and badge */
+    gap: 25px;               /* space between timer and badge */
 
 }
 

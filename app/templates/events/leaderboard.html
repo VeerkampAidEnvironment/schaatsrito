@@ -158,23 +158,35 @@
 .rank-position {
     font-size: 1.8rem;
     font-weight: 800;
-    width: 60px;
+    width: 50px;
+    height: 50px;
     text-align: center;
+    border: solid 2px var(--color-1);
+    color: var(--color-1);
+    border-radius: 25px;
+    padding: 4px;
+
 }
 
-.rank-1 .rank-position { color: #FFD700; } /* Gold */
-.rank-2 .rank-position { color: #C0C0C0; } /* Silver */
-.rank-3 .rank-position { color: #CD7F32; } /* Bronze */
+.rank-1 .rank-position { color: #FFD700; border: solid 5px #FFD700;
+} /* Gold */
+.rank-2 .rank-position { color: #C0C0C0; border: solid 5px #C0C0C0;
+} /* Silver */
+.rank-3 .rank-position { color: #CD7F32; border: solid 5px #CD7F32;
+} /* Bronze */
 
 .rank-info {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    width: 80%;
 }
 
 .rank-name {
     font-weight: 600;
     color: var(--color-5);
+    padding: 5px;
+    border: solid 2px var(--color-1);
+    border-radius: 20px;
+    font-size:1.2rem;
 }
 
 .rank-score {

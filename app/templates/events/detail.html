@@ -6,7 +6,7 @@
 {% if future %}
   {% if prediction %}
     <div class="prediction-status submitted">
-      ✅ You have submitted your prediction.
+      ✅ You have submitted a prediction.
     </div>
   {% else %}
     <div class="prediction-status not-submitted">
@@ -677,8 +677,42 @@ body::before {
   background-color: #fff3e0; /* light orange */
   color: #e65100;
 }
+.podium-arrows {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.4rem;
+  height:25px;
+  justify-content:center;
+}
+
+.arrow-btn {
+  border: solid 1px var(--color-1);
+  background: var(--color-2);
+  border-radius: 15px;
+  padding: 0.2rem 0.4rem;
+  cursor: pointer;
+}
 
 </style>
+<style>
+/* Subtle warning for podium cards not matching prediction */
+.podium-card.warning {
+  border: 2px solid #fbc02d; /* amber border */
+  background-color: #fff8e1;  /* very light yellow background */
+  position: relative;
+}
+
+/* Warning text inside the podium card */
+.podium-card .warning-text {
+  font-size: 0.8rem;
+  color: #f57c00;  /* orange text */
+  font-weight: 600;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+</style>
+
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -702,52 +736,82 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderPodium() {
     const medalClass = {1: 'gold', 2: 'silver', 3: 'bronze'};
 
-    [1,2,3].forEach(pos => {
+    [1, 2, 3].forEach(pos => {
       const card = podiumCards[pos];
       const riderId = selected[pos - 1];
 
-      card.className = 'podium-card';
-
+      card.className = 'podium-card'; // reset
       if (!riderId) {
         card.classList.add('empty');
         card.innerHTML = 'Select rider';
         return;
       }
 
+      const arrows = `
+        <div class="podium-arrows">
+          ${pos > 1 ? `<button type="button" class="arrow-btn up" data-pos="${pos}">⬆</button>` : ``}
+          ${pos < 3 ? `<button type="button" class="arrow-btn down" data-pos="${pos}">⬇</button>` : ``}
+        </div>
+      `;
+
       const riderCard = document.querySelector(`.rider-card[data-id="${riderId}"]`);
       if (!riderCard) return;
 
       const imgSrc = riderCard.querySelector('img') ? riderCard.querySelector('img').src : '';
-      card.classList.add(medalClass[pos]);
-      card.setAttribute('draggable', 'true');
+
+      // --- NEW WARNING LOGIC ---
+      let warningHTML = '';
+      {% if prediction %}
+        const correctPrediction = [
+          "{{ prediction.rider_1_id }}",
+          "{{ prediction.rider_2_id }}",
+          "{{ prediction.rider_3_id }}"
+        ];
+        if (riderId !== correctPrediction[pos - 1]) {
+          card.classList.add('warning'); // amber border
+          warningHTML = `<div class="warning-text">⚠️ Changed not saved!</div>`;
+        } else {
+          card.classList.remove('warning');
+        }
+      {% endif %}
+      // ------------------------
+
+      card.classList.add({1:'gold',2:'silver',3:'bronze'}[pos]);
+      card.setAttribute('draggable','true');
       card.dataset.riderId = riderId;
 
+      // Build innerHTML including warning
       card.innerHTML = `
         ${imgSrc ? `<img src="${imgSrc}" alt="${riderCard.dataset.name}">` : ''}
         <strong>${riderCard.dataset.name}</strong>
+        ${warningHTML}   <!-- <-- put it here -->
+        ${arrows}
         <button type="button" class="remove-btn" data-id="${riderId}">✕ Remove</button>
       `;
     });
 
+
+    // Disable select buttons
     document.querySelectorAll('.select-btn').forEach(btn => {
       const id = btn.closest('.rider-card').dataset.id;
       btn.disabled = selected.includes(id);
     });
 
-        document.querySelectorAll('.rider-card').forEach(card => {
+    // Visual selection state
+    document.querySelectorAll('.rider-card').forEach(card => {
       const id = card.dataset.id;
-      if (selected.includes(id)) {
-        card.classList.add('selected');  // <-- add this class
-      } else {
-        card.classList.remove('selected');
-      }
+      card.classList.toggle('selected', selected.includes(id));
     });
-
 
     updateHiddenInputs();
     enableDragAndDrop();
+
+    // ✅ NEW: highlight mismatch with prediction
+    highlightPredictionMismatch();
   }
 
+
+  // Select rider
   document.querySelectorAll('.select-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (selected.length >= 3) return;
@@ -757,6 +821,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Remove rider
   document.addEventListener('click', e => {
     if (!e.target.classList.contains('remove-btn')) return;
     const id = e.target.dataset.id;
@@ -765,6 +830,23 @@ document.addEventListener("DOMContentLoaded", () => {
       selected.splice(index, 1);
       renderPodium();
     }
+  });
+
+  // Arrow up/down
+  document.addEventListener('click', e => {
+    if (!e.target.classList.contains('arrow-btn')) return;
+
+    const pos = parseInt(e.target.dataset.pos, 10) - 1;
+
+    if (e.target.classList.contains('up') && pos > 0) {
+      [selected[pos - 1], selected[pos]] = [selected[pos], selected[pos - 1]];
+    }
+
+    if (e.target.classList.contains('down') && pos < selected.length - 1) {
+      [selected[pos + 1], selected[pos]] = [selected[pos], selected[pos + 1]];
+    }
+
+    renderPodium();
   });
 
   function enableDragAndDrop() {
@@ -792,40 +874,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       card.addEventListener('drop', () => {
         card.classList.remove('drag-over');
-        if (draggedIndex === null) return;
-
-        const targetIndex = index;
-        if (draggedIndex === targetIndex) return;
+        if (draggedIndex === null || draggedIndex === index) return;
 
         const moved = selected.splice(draggedIndex, 1)[0];
-        selected.splice(targetIndex, 0, moved);
+        selected.splice(index, 0, moved);
         renderPodium();
       });
     });
   }
-
-  const profileModal = document.getElementById("profile-modal");
-  const profileFrame = document.getElementById("profile-frame");
-  const modalClose = profileModal.querySelector(".modal-close");
-
-  window.openProfileModal = function(riderId) {
-    const url = `https://live.isuresults.eu/profiles/${riderId}`;
-    console.log("Profile URL:", url);   // 👈 print it
-    profileFrame.src = url;
-    profileModal.style.display = "flex";
-  }
-
-  modalClose.addEventListener("click", () => {
-      profileModal.style.display = "none";
-      profileFrame.src = "";
-  });
-
-  window.addEventListener("click", (e) => {
-      if (e.target === profileModal) {
-          profileModal.style.display = "none";
-          profileFrame.src = "";
-      }
-  });
 
   {% if prediction %}
     selected.push(
@@ -911,6 +967,48 @@ if (loadResultsBtn) {
   });
 }
 </script>
+
+<script>
+function highlightPredictionMismatch() {
+  {% if prediction %}
+    const correctPrediction = [
+      "{{ prediction.rider_1_id }}",
+      "{{ prediction.rider_2_id }}",
+      "{{ prediction.rider_3_id }}"
+    ];
+
+    [1,2,3].forEach(pos => {
+      const card = document.querySelector(`.podium-card[data-position="${pos}"]`);
+      const currentRider = selected[pos - 1];
+
+      if (!card || !currentRider) return;
+
+      // Remove previous warning class
+      card.classList.remove('warning');
+
+      // If the current rider is not the correct one for this position
+      if (currentRider !== correctPrediction[pos - 1]) {
+        card.classList.add('warning');
+
+        // Add warning text
+        if (!card.querySelector('.warning-text')) {
+          const warningDiv = document.createElement('div');
+          warningDiv.className = 'warning-text';
+          warningDiv.textContent = "⚠️ Changed from your prediction";
+          card.appendChild(warningDiv);
+        }
+      } else {
+        card.classList.remove('warning');
+        const existing = card.querySelector('.warning-text');
+        if (existing) existing.remove();
+      }
+
+    });
+  {% endif %}
+}
+</script>
+
+
 <!-- ================= PROFILE MODAL ================= -->
 <div id="profile-modal" class="modal">
   <div class="modal-content">

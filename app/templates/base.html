@@ -111,6 +111,35 @@ body {
   flex: 1;
   padding: 2rem;
 }
+
+  .flash-container {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+}
+
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.flash.success {
+  background: #dcedc8;
+  color: #33691e;
+}
+
+.flash.error {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.flash.info {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
 </style>
 </head>
 <body>
@@ -124,7 +153,17 @@ body {
   </div>
 </nav>
 {% endif %}
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
 <div class="main-content">
   {% block content %}{% endblock %}
 </div>
