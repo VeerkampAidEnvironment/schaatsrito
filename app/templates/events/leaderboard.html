@@ -142,14 +142,16 @@
 
 .ranking-card {
     display: flex;
-    align-items: center;
+    align-items: center;       /* vertically center */
+    justify-content: space-between; /* spread children horizontally */
     background: var(--color-2);
     border-radius: 14px;
     padding: 1rem 1.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: transform 0.2s;
     border: 5px solid var(--bright-fern);
+    gap: 1rem;                 /* optional spacing between items */
 }
+
 
 .ranking-card:hover {
     transform: translateY(-2px);
@@ -160,13 +162,14 @@
     font-weight: 800;
     width: 50px;
     height: 50px;
-    text-align: center;
+    display: flex;           /* flex to center text */
+    align-items: center;     /* vertical center */
+    justify-content: center; /* horizontal center */
     border: solid 2px var(--color-1);
     color: var(--color-1);
-    border-radius: 25px;
-    padding: 4px;
-
+    border-radius: 50%;
 }
+
 
 .rank-1 .rank-position { color: #FFD700; border: solid 5px #FFD700;
 } /* Gold */
@@ -177,20 +180,26 @@
 
 .rank-info {
     display: flex;
-    width: 80%;
+    flex-grow: 1;             /* takes remaining space */
+    justify-content: space-between; /* push name left, score right */
+    align-items: center;
+    gap: 1rem;                /* optional spacing */
 }
+
 
 .rank-name {
     font-weight: 600;
     color: var(--color-5);
-    padding: 5px;
+    padding: 0.4rem 0.8rem;
     border: solid 2px var(--color-1);
     border-radius: 20px;
-    font-size:1.2rem;
+    font-size: 1.2rem;
+    white-space: nowrap;      /* prevent wrapping */
 }
 
+
 .rank-score {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--color-6);
 }
