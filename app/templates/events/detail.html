@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class="title-wrapper">
 <h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
 
 {% if future %}
@@ -13,7 +13,7 @@
       ⚠️ You have not submitted a prediction yet.
     </div>
   {% endif %}
-
+</div>
 {% if not startlist_loaded %}
   <button
     type="button"
@@ -34,17 +34,14 @@
   <!-- ================= PODIUM ================= -->
   <div class="podium">
     <div class="podium-slot second">
-      <span class="slot-label">2nd</span>
       <div class="podium-card empty" data-position="2">Select rider</div>
     </div>
 
     <div class="podium-slot first">
-      <span class="slot-label">1st</span>
       <div class="podium-card empty" data-position="1">Select rider</div>
     </div>
 
     <div class="podium-slot third">
-      <span class="slot-label">3rd</span>
       <div class="podium-card empty" data-position="3">Select rider</div>
     </div>
   </div>
@@ -189,6 +186,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
+
 }
 
 .btn-submit:disabled {
@@ -225,13 +223,6 @@
     transform: translateY(-25px);
 }
 
-.slot-label {
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    display: block;
-    color:var(--color-3);
-}
-
 .podium-card {
     background: var(--color-6);
     border-radius: 14px;
@@ -261,18 +252,18 @@
 
 /* ===== PODIUM MEDAL COLORS ===== */
 .podium-card.gold {
-    border: 3px solid #ffd700;
-    background: linear-gradient(135deg, #fff8dc, #fff);
+    border: 7px solid #ffd700;
+    background: linear-gradient(135deg, #ffd700, #fff);
 }
 
 .podium-card.silver {
-    border: 3px solid #c0c0c0;
-    background: linear-gradient(135deg, #f5f5f5, #fff);
+    border: 7px solid #c0c0c0;
+    background: linear-gradient(135deg, #c0c0c0, #fff);
 }
 
 .podium-card.bronze {
-    border: 3px solid #cd7f32;
-    background: linear-gradient(135deg, #fbe6d4, #fff);
+    border: 7px solid #cd7f32;
+    background: linear-gradient(135deg, #cd7f32, #fff);
 }
 
 .podium-card img {
@@ -693,6 +684,16 @@ body::before {
   cursor: pointer;
 }
 
+.title-wrapper {
+  display: flex;               /* use flex layout */
+  justify-content: space-between; /* space between title and status */
+  align-items: center;         /* vertically center them */
+  width: 100%;
+  gap: 1rem;                   /* optional spacing between items */
+  flex-wrap: wrap;             /* allow wrapping on small screens */
+}
+
+
 </style>
 <style>
 /* Subtle warning for podium cards not matching prediction */
@@ -784,9 +785,13 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = `
         ${imgSrc ? `<img src="${imgSrc}" alt="${riderCard.dataset.name}">` : ''}
         <strong>${riderCard.dataset.name}</strong>
-        ${warningHTML}   <!-- <-- put it here -->
-        ${arrows}
-        <button type="button" class="remove-btn" data-id="${riderId}">✕ Remove</button>
+        ${warningHTML}
+        <div class="podium-controls" style="display:flex; justify-content:center; gap:0.3rem; align-items:center; margin-top:0.5rem;">
+          ${pos > 1 ? `<button type="button" class="arrow-btn up" data-pos="${pos}">⬆</button>` : `<div style="width:26px"></div>`}
+          <button type="button" class="profile-btn" onclick="openProfileModal('${riderId}')">Profile</button>
+          ${pos < 3 ? `<button type="button" class="arrow-btn down" data-pos="${pos}">⬇</button>` : `<div style="width:26px"></div>`}
+        </div>
+        <button type="button" class="remove-btn" data-id="${riderId}" style="margin-top:0.5rem;">✕ Remove</button>
       `;
     });
 
