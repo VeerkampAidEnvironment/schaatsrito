@@ -13,8 +13,8 @@
 
     <!-- Men -->
     <div class="event-gender-section">
-        <div class="gender-title">Men</div>
         <div class="event-nav">
+            <div class="gender-title">Men</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
                 {% if gender == 'Men' %}
@@ -41,8 +41,8 @@
 
     <!-- Women -->
     <div class="event-gender-section">
-        <div class="gender-title">Women</div>
         <div class="event-nav">
+        <div class="gender-title">Women</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
                 {% if gender == 'Women' %}
@@ -228,6 +228,8 @@ document.addEventListener("DOMContentLoaded", () => {
     z-index: 1000;
     background: transparent;
     padding: 15px 0;
+    width:80%;
+    left:10%;
 }
 
 .event-nav {

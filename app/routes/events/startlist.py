@@ -11,11 +11,9 @@ def load_startlist(event_id):
     event = Event.query.get_or_404(event_id)
     event_code = current_app.config["EVENT_CODE"]
 
-    # If startlist already exists
     if event.startlist:
         return jsonify({"status": "already_loaded"})
 
-    # Build API URL for competition-specific startlist
     api_url = f"https://api.isuresults.eu/events/2026_{event_code}/competitions/{event.id}/start-list/"
 
     try:
@@ -26,36 +24,55 @@ def load_startlist(event_id):
         return jsonify({"status": "not_available", "error": str(e)})
 
     added = 0
+
     for entry in data:
-        competitor = entry.get("competitor")
-        if not competitor:
-            continue
-        skater = competitor.get("skater")
-        if not skater:
-            continue
+        if entry.get("type") == "ind":
+            # Individual event: same as before
+            competitor = entry.get("competitor")
+            if not competitor or not competitor.get("skater"):
+                continue
+            skater = competitor["skater"]
 
-        # Match Rider by skater ID
-        rider = Rider.query.get(skater["id"])
-        if not rider:
-            # Optionally, create rider if missing in DB
-            rider = Rider(
-                id=skater["id"],
-                name=f'{skater["firstName"]} {skater["lastName"]}',
-                country=skater.get("country"),
-                gender=skater.get("gender"),
-                profile=None,
-                photo=skater.get("photo")
-            )
-            db.session.add(rider)
-            db.session.flush()  # get rider.id without committing
+            rider = Rider.query.get(skater["id"])
+            if not rider:
+                rider = Rider(
+                    id=skater["id"],
+                    name=f'{skater["firstName"]} {skater["lastName"]}',
+                    country=skater.get("country"),
+                    gender=skater.get("gender"),
+                    profile=None,
+                    photo=skater.get("photo")
+                )
+                db.session.add(rider)
+                db.session.flush()
 
-        # Check if startlist entry exists
-        exists = EventStartlist.query.filter_by(event_id=event.id, rider_id=rider.id).first()
-        if exists:
-            continue
+            if not EventStartlist.query.filter_by(event_id=event.id, rider_id=rider.id).first():
+                db.session.add(EventStartlist(event_id=event.id, rider_id=rider.id))
+                added += 1
 
-        db.session.add(EventStartlist(event_id=event.id, rider_id=rider.id))
-        added += 1
+        elif entry.get("type") == "team":
+            # Team event: just create a Rider using the team name
+            team = entry.get("team")
+            if not team or not team.get("name"):
+                continue
+
+            team_name = team["name"]
+            # Check if this team already exists as a Rider
+            rider = Rider.query.filter_by(name=team_name).first()
+            if not rider:
+                rider = Rider(
+                    name=team_name,
+                    country=team.get("country"),
+                    gender=team.get("gender"),
+                    profile=None,
+                    photo=None
+                )
+                db.session.add(rider)
+                db.session.flush()
+
+            if not EventStartlist.query.filter_by(event_id=event.id, rider_id=rider.id).first():
+                db.session.add(EventStartlist(event_id=event.id, rider_id=rider.id))
+                added += 1
 
     if added > 0:
         db.session.commit()

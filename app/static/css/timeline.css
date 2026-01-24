@@ -227,16 +227,18 @@ body::before {
 .card-prediction .badge {
     font-size: 0.8rem;
     padding: 4px 10px;
-    border-radius: 20px;
+    border-radius: 15px;
+    color: var(--alabaster-grey);
+    border: 1.5px solid var(--color-1);
 }
 
 .badge.open {
-    background: var(--color-6);
-    color: white;
+    background: var(--alabaster-grey);
+    color: var(--stormy-teal);
 }
 
 .badge.predicted {
-    background: var(--color-5);
+    background: var(--lime-green);
     color: white;
 }
 
@@ -323,14 +325,14 @@ body::before {
 
 .event-nav a.active {
     background: #007BFF;
-    color: #fff;
+    color: var(--alabaster-grey);
     font-weight: 600;
     box-shadow: 0 0 0 2px rgba(255,255,255,0.15);
 }
 
 .event-nav a:hover {
     background: #007BFF;
-    color: #fff;
+    color: var(--alabaster-grey);
     transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
@@ -381,10 +383,13 @@ body::before {
 
 .gender-title {
     font-weight: 700;
-    font-size: 1.2rem;
-    color: #ccc;
-    margin-bottom: 4px;
+    font-size: 1.5rem;
+    color: var(--dark-teal-2);
     text-align: center;
+    z-index: 100;
+    margin-right: 50px;
+    border: 5px solid var(--alabaster-grey);
+
 }
 
 /* Reuse existing .event-nav styles */
@@ -406,3 +411,10 @@ body::before {
 
 }
 
+.status-text {
+    color: var(--alabaster-grey);
+    background-color: var(--color-6);
+    padding:2px;
+    border-radius:6px;
+    border: 2px solid var(--color-1);
+}

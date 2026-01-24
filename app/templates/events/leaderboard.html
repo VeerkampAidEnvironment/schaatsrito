@@ -3,11 +3,7 @@
 
 <!-- Link your CSS palette -->
 
-<h1 class="page-title">Leaderboard</h1>
-
 <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h1 class="page-title">Leaderboard</h1>
-
     <a href="{{ url_for('admin.update_scores') }}"
        class="update-btn"
        onclick="return confirm('Recalculate all scores?');">
@@ -16,9 +12,14 @@
 </div>
 
 <!-- ================= TOGGLE ================= -->
-<div class="view-toggle">
-    <button id="rankingBtn" class="toggle-btn active">🏆 Ranking</button>
-    <button id="tableBtn" class="toggle-btn">📊 Detailed Score</button>
+<div class="toggle-container">
+<div class="toggle-switch">
+  <input type="checkbox" id="viewToggle" />
+  <label for="viewToggle">
+    <span class="toggle-option toggle-ranking">🏆 Ranking</span>
+    <span class="toggle-option toggle-table">📊 Detailed Score</span>
+  </label>
+</div>
 </div>
 
 <!-- ================= RANKING VIEW ================= -->
@@ -52,7 +53,7 @@
     <tbody>
         {% for user in user_scores %}
         <tr>
-            <td>{{ user.username }}</td>
+            <td class="user-cell">{{ user.username }}</td>
             <td class="total-cell">{{ user.total_score }}</td>
 
             {% for event in events %}
@@ -147,6 +148,7 @@
     padding: 1rem 1.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s;
+    border: 5px solid var(--bright-fern);
 }
 
 .ranking-card:hover {
@@ -202,10 +204,24 @@ table.leaderboard {
 .score-cell {
     cursor: pointer;
     font-weight: 600;
+    background: var(--alabaster-grey);
 }
 
 .score-cell:hover {
     background: var(--color-2);
+}
+
+.total-cell {
+    background: var(--golden-sand);
+    color: var(--color-1);
+    font weight: 200;
+    font-size: 2rem;
+}
+.user-cell {
+    background: var(--golden-sand);
+    color: var(--color-1);
+    font-size: 1rem;
+    font-weight: 200;
 }
 
 /* Modal */
@@ -259,6 +275,125 @@ table.leaderboard {
     background: var(--color-5);
 }
 
+.toggle-container {
+    display: flex;
+    justify-content: center;  /* horizontally center */
+    margin-bottom: 2rem;     /* spacing from leaderboard */
+}
+
+.toggle-switch {
+    width: 40%;
+    position: relative;
+    user-select: none;
+    margin-bottom: 2rem;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-switch label {
+    display: flex;
+    background: var(--alabaster-grey);
+    border-radius: 30px;
+    border: 5px solid var(--color-1);
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.toggle-switch .toggle-option {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    z-index: 2;
+    color: var(--color-4);
+    transition: color 0.2s;
+    padding: 8px 0;
+}
+
+.toggle-switch input:checked + label .toggle-ranking {
+    color: var(--color-4);
+}
+
+.toggle-switch input:checked + label .toggle-table {
+    color: white;
+}
+
+.toggle-switch label::before {
+    content: "";
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    background: var(--powder-blue);
+    border-radius: 30px;
+    top: 0;
+    left: 0;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.toggle-switch input:checked + label::before {
+    left: 50%;
+}
+  body {
+    margin: 0;
+    min-height: 100vh;
+
+    background:
+        /* soft curved light streaks */
+        linear-gradient(
+            140deg,
+            transparent 35%,
+            rgba(255,255,255,0.18) 42%,
+            transparent 50%
+        ),
+        linear-gradient(
+            300deg,
+            transparent 30%,
+            rgba(200,255,255,0.12) 38%,
+            transparent 45%
+        ),
+
+        /* neon lime bloom */
+        radial-gradient(
+            55% 45% at 65% 55%,
+            rgba(150, 255, 130, 0.38),
+            transparent 68%
+        ),
+
+        /* aqua sweep */
+        radial-gradient(
+            65% 40% at 30% 65%,
+            rgba(70, 210, 220, 0.5),
+            transparent 72%
+        ),
+
+        /* deep base ocean */
+        linear-gradient(
+            160deg,
+            #063f4a 0%,
+            #075f66 35%,
+            #0a7b74 60%,
+            #1a8b5a 100%
+        );
+
+    background-attachment: fixed;
+    background-blend-mode: screen, screen, lighten, lighten, normal;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+
+    mix-blend-mode: soft-light;
+    opacity: 0.25;
+}
+
 </style>
 
 <!-- ================= DATA ================= -->
@@ -269,11 +404,20 @@ const CURRENT_USER_ID = {{ current_user_id }};
 
 <!-- ================= SCRIPT ================= -->
 <script>
-// Toggle logic
-const rankingBtn = document.getElementById("rankingBtn");
-const tableBtn = document.getElementById("tableBtn");
-const rankingView = document.getElementById("rankingView");
-const tableView = document.getElementById("tableView");
+const viewToggle = document.getElementById("viewToggle");
+
+viewToggle.addEventListener("change", () => {
+    if (viewToggle.checked) {
+        // Show Table, Hide Ranking
+        rankingView.style.display = "none";
+        tableView.style.display = "block";
+    } else {
+        // Show Ranking, Hide Table
+        rankingView.style.display = "block";
+        tableView.style.display = "none";
+    }
+});
+
 
 rankingBtn.onclick = () => {
     rankingView.style.display = "block";
