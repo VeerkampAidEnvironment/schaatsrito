@@ -52,11 +52,11 @@ def leaderboard():
                     ]
                 else:
                     # Past event but no score yet
-                    user_event_scores[user.id][event.id] = "⏳"
+                    user_event_scores[user.id][event.id] = "❌"
                     score_details[user.id][event.id] = []
             else:
                 # Future event
-                user_event_scores[user.id][event.id] = "✅" if pred else "❌"
+                user_event_scores[user.id][event.id] = "✅" if pred else "⏳"
                 score_details[user.id][event.id] = []
 
     return render_template(

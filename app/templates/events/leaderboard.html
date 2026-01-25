@@ -1,492 +1,653 @@
-{% extends "base.html" %}
-{% block content %}
+    {% extends "base.html" %}
+    {% block content %}
 
-<!-- Link your CSS palette -->
+    <!-- Link your CSS palette -->
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-    <a href="{{ url_for('admin.update_scores') }}"
-       class="update-btn"
-       onclick="return confirm('Recalculate all scores?');">
-        🔄 Update scores
-    </a>
-</div>
-
-<!-- ================= TOGGLE ================= -->
-<div class="toggle-container">
-<div class="toggle-switch">
-  <input type="checkbox" id="viewToggle" />
-  <label for="viewToggle">
-    <span class="toggle-option toggle-ranking">🏆 Ranking</span>
-    <span class="toggle-option toggle-table">📊 Detailed Score</span>
-  </label>
-</div>
-</div>
-
-<!-- ================= RANKING VIEW ================= -->
-<div id="rankingView">
-    <div class="ranking-container">
-        {% for user in user_scores %}
-        <div class="ranking-card rank-{{ loop.index }}">
-            <div class="rank-position">{{ loop.index }}</div>
-
-            <div class="rank-info">
-                <div class="rank-name">{{ user.username }}</div>
-                <div class="rank-score">{{ user.total_score }} pts</div>
-            </div>
-        </div>
-        {% endfor %}
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <a href="{{ url_for('admin.update_scores') }}"
+           class="update-btn"
+           onclick="return confirm('Recalculate all scores?');">
+            🔄 Update scores
+        </a>
     </div>
-</div>
 
-<!-- ================= FULL SCORE TABLE ================= -->
-<div id="tableView" style="display:none">
-<table class="leaderboard">
-    <thead>
-        <tr>
-            <th>User</th>
-            <th>Total</th>
-            {% for event in events %}
-                <th>{{ event.name }}</th>
+    <!-- ================= TOGGLE ================= -->
+    <div class="toggle-container">
+    <div class="toggle-switch">
+      <input type="checkbox" id="viewToggle" />
+      <label for="viewToggle">
+        <span class="toggle-option toggle-ranking">🏆 Ranking</span>
+        <span class="toggle-option toggle-table">📊 Detailed Score</span>
+      </label>
+    </div>
+    </div>
+
+    <!-- ================= RANKING VIEW ================= -->
+    <div id="rankingView">
+        <div class="ranking-container">
+            {% for user in user_scores %}
+            <div class="ranking-card rank-{{ loop.index }}">
+                <div class="rank-position">{{ loop.index }}</div>
+
+                <div class="rank-info">
+                    <div class="rank-name">{{ user.username }}</div>
+                    <div class="rank-score">{{ user.total_score }} pts</div>
+                </div>
+            </div>
             {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in user_scores %}
-        <tr>
-            <td class="user-cell">{{ user.username }}</td>
-            <td class="total-cell">{{ user.total_score }}</td>
+        </div>
+    </div>
 
-            {% for event in events %}
-            <td class="score-cell"
-                data-user-id="{{ user.id }}"
-                data-event-id="{{ event.id }}"
-                data-user="{{ user.username }}"
-                data-event="{{ event.name }}"
-                data-score="{{ user_event_scores[user.id][event.id] }}">
-                {{ user_event_scores[user.id][event.id] }}
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
-
-<!-- ================= MODAL ================= -->
-<div id="scoreModal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close">&times;</span>
-    <h2 id="modalTitle"></h2>
-
-    <table class="modal-table">
+    <!-- ================= FULL SCORE TABLE ================= -->
+    <div id="tableView" style="display:none">
+    <div class="table-card">
+    <table class="leaderboard">
         <thead>
             <tr>
-                <th colspan="3">Prediction</th>
-                <th colspan="3">Your Data</th>
-            </tr>
-            <tr>
-                <th>Rider</th>
-                <th>Position</th>
-                <th>Points</th>
-                <th>Rider</th>
-                <th>Position</th>
-                <th>Points</th>
+                <th>User</th>
+                <th>Total</th>
+                {% for event in events %}
+                    <th>{{ event.name }}</th>
+                {% endfor %}
             </tr>
         </thead>
-        <tbody id="modalBody"></tbody>
+        <tbody>
+            {% for user in user_scores %}
+            <tr>
+                <td class="user-cell">{{ user.username }}</td>
+                <td class="total-cell">{{ user.total_score }}</td>
+
+                {% for event in events %}
+                <td class="score-cell"
+                    data-user-id="{{ user.id }}"
+                    data-event-id="{{ event.id }}"
+                    data-user="{{ user.username }}"
+                    data-event="{{ event.name }}"
+                    data-score="{{ user_event_scores[user.id][event.id] }}">
+                    {{ user_event_scores[user.id][event.id] }}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  </div>
-</div>
+    </div>
+    </div>
 
-<!-- ================= STYLES ================= -->
-<style>
-/* Page Title */
-.page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--color-1);
-}
+    <!-- ================= MODAL ================= -->
+    <div id="scoreModal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <h2 id="modalTitle"></h2>
 
-/* Toggle Buttons */
-.view-toggle {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-}
+        <table class="modal-table">
+            <thead>
+                <tr>
+                    <th colspan="3">Prediction</th>
+                    <th colspan="3">Your Data</th>
+                </tr>
+                <tr>
+                    <th>Rider</th>
+                    <th>Position</th>
+                    <th>Points</th>
+                    <th>Rider</th>
+                    <th>Position</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody id="modalBody"></tbody>
+        </table>
+      </div>
+    </div>
 
-.toggle-btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    background: var(--color-2);
-    color: var(--color-4);
-    transition: all 0.2s ease;
-}
+    <!-- ================= STYLES ================= -->
+    <style>
+    /* Page Title */
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--color-1);
+    }
 
-.toggle-btn.active {
-    background: var(--color-3);
-    color: white;
-}
+    /* Toggle Buttons */
+    .view-toggle {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
 
-/* Ranking */
-.ranking-container {
-    max-width: 600px;
+    .toggle-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        background: var(--color-2);
+        color: var(--color-4);
+        transition: all 0.2s ease;
+    }
+
+    .toggle-btn.active {
+        background: var(--color-3);
+        color: white;
+    }
+
+    /* Ranking */
+    .ranking-container {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .ranking-card {
+        display: flex;
+        align-items: center;       /* vertically center */
+        justify-content: space-between; /* spread children horizontally */
+        background: var(--color-2);
+        border-radius: 14px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: 5px solid var(--bright-fern);
+        gap: 1rem;                 /* optional spacing between items */
+    }
+
+
+    .ranking-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .rank-position {
+        font-size: 1.8rem;
+        font-weight: 800;
+        width: 50px;
+        height: 50px;
+        display: flex;           /* flex to center text */
+        align-items: center;     /* vertical center */
+        justify-content: center; /* horizontal center */
+        border: solid 2px var(--color-1);
+        color: var(--color-1);
+        border-radius: 50%;
+    }
+
+
+    .rank-1 .rank-position { color: #FFD700; border: solid 5px #FFD700;
+    } /* Gold */
+    .rank-2 .rank-position { color: #C0C0C0; border: solid 5px #C0C0C0;
+    } /* Silver */
+    .rank-3 .rank-position { color: #CD7F32; border: solid 5px #CD7F32;
+    } /* Bronze */
+
+    .rank-info {
+        display: flex;
+        flex-grow: 1;             /* takes remaining space */
+        justify-content: space-between; /* push name left, score right */
+        align-items: center;
+        gap: 1rem;                /* optional spacing */
+    }
+
+
+    .rank-name {
+        font-weight: 600;
+        color: var(--color-5);
+        padding: 0.4rem 0.8rem;
+        border: solid 2px var(--color-1);
+        border-radius: 20px;
+        font-size: 1.2rem;
+        white-space: nowrap;      /* prevent wrapping */
+    }
+
+
+    .rank-score {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-6);
+    }
+
+ /* ================= PROFESSIONAL TABLE ================= */
+
+#tableView {
+    max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
-.ranking-card {
-    display: flex;
-    align-items: center;       /* vertically center */
-    justify-content: space-between; /* spread children horizontally */
-    background: var(--color-2);
-    border-radius: 14px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 5px solid var(--bright-fern);
-    gap: 1rem;                 /* optional spacing between items */
-}
-
-
-.ranking-card:hover {
-    transform: translateY(-2px);
-}
-
-.rank-position {
-    font-size: 1.8rem;
-    font-weight: 800;
-    width: 50px;
-    height: 50px;
-    display: flex;           /* flex to center text */
-    align-items: center;     /* vertical center */
-    justify-content: center; /* horizontal center */
-    border: solid 2px var(--color-1);
-    color: var(--color-1);
-    border-radius: 50%;
-}
-
-
-.rank-1 .rank-position { color: #FFD700; border: solid 5px #FFD700;
-} /* Gold */
-.rank-2 .rank-position { color: #C0C0C0; border: solid 5px #C0C0C0;
-} /* Silver */
-.rank-3 .rank-position { color: #CD7F32; border: solid 5px #CD7F32;
-} /* Bronze */
-
-.rank-info {
-    display: flex;
-    flex-grow: 1;             /* takes remaining space */
-    justify-content: space-between; /* push name left, score right */
-    align-items: center;
-    gap: 1rem;                /* optional spacing */
-}
-
-
-.rank-name {
-    font-weight: 600;
-    color: var(--color-5);
-    padding: 0.4rem 0.8rem;
-    border: solid 2px var(--color-1);
-    border-radius: 20px;
-    font-size: 1.2rem;
-    white-space: nowrap;      /* prevent wrapping */
-}
-
-
-.rank-score {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--color-6);
-}
-
-/* Table */
-table.leaderboard {
+/* Card container feel */
+.leaderboard {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(255,255,255,0.85);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+    backdrop-filter: blur(6px);
 }
 
-.leaderboard th,
-.leaderboard td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
+/* Header */
+.leaderboard thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 
-.leaderboard th {
-    background: var(--color-3);
+    background: linear-gradient(
+        180deg,
+        var(--color-1),
+        var(--stormy-teal)
+    );
     color: white;
+
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    padding: 0.9rem 0.8rem;
+    border: none;
 }
 
+/* Cells */
+.leaderboard td {
+    padding: 0.85rem 0.8rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    font-size: 0.95rem;
+    transition: background 0.15s ease, transform 0.08s ease;
+}
+
+/* Zebra striping */
+.leaderboard tbody tr:nth-child(even) {
+    background: rgba(0,0,0,0.02);
+}
+
+/* Row hover */
+.leaderboard tbody tr:hover {
+    background: rgba(108, 194, 57, 0.12);
+}
+
+/* User column */
+.user-cell {
+    font-weight: 700;
+    color: var(--color-4);
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Total column */
+.total-cell {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-1);
+    background: linear-gradient(
+        135deg,
+        rgba(196,197,90,0.5),
+        rgba(181,212,180,0.5)
+    );
+}
+
+/* Score cells (clickable) */
 .score-cell {
     cursor: pointer;
     font-weight: 600;
-    background: var(--alabaster-grey);
+    border-radius: 6px;
+    position: relative;
 }
 
+/* Hover highlight */
 .score-cell:hover {
     background: var(--color-2);
+    transform: scale(1.05);
 }
 
-.total-cell {
-    background: var(--golden-sand);
-    color: var(--color-1);
-    font weight: 200;
-    font-size: 2rem;
-}
-.user-cell {
-    background: var(--golden-sand);
-    color: var(--color-1);
-    font-size: 1rem;
-    font-weight: 200;
-}
-
-/* Modal */
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: var(--color-2);
-    padding: 1.5rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 600px;
-}
-
-.modal-close {
-    float: right;
-    font-size: 1.4rem;
-    cursor: pointer;
-}
-
-.modal-table {
-    width: 100%;
-    margin-top: 1rem;
-    border-collapse: collapse;
-}
-
-.modal-table th,
-.modal-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-    .update-btn {
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    background: var(--color-6);
-    color: white;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s ease;
-}
-
-.update-btn:hover {
-    background: var(--color-5);
-}
-
-.toggle-container {
-    display: flex;
-    justify-content: center;  /* horizontally center */
-    margin-bottom: 2rem;     /* spacing from leaderboard */
-}
-
-.toggle-switch {
-    width: 40%;
-    position: relative;
-    user-select: none;
-    margin-bottom: 2rem;
-}
-
-.toggle-switch input {
-    display: none;
-}
-
-.toggle-switch label {
-    display: flex;
-    background: var(--alabaster-grey);
-    border-radius: 30px;
-    border: 5px solid var(--color-1);
-    padding: 5px;
-    cursor: pointer;
-    position: relative;
-}
-
-.toggle-switch .toggle-option {
-    flex: 1;
-    text-align: center;
-    font-weight: 600;
-    z-index: 2;
-    color: var(--color-4);
-    transition: color 0.2s;
-    padding: 8px 0;
-}
-
-.toggle-switch input:checked + label .toggle-ranking {
-    color: var(--color-4);
-}
-
-.toggle-switch input:checked + label .toggle-table {
-    color: white;
-}
-
-.toggle-switch label::before {
-    content: "";
+/* Click hint dot */
+.score-cell::after {
+    content: "↗";
     position: absolute;
-    width: 50%;
-    height: 100%;
-    background: var(--powder-blue);
-    border-radius: 30px;
-    top: 0;
-    left: 0;
-    transition: all 0.3s ease;
-    z-index: 1;
+    right: 6px;
+    top: 4px;
+    font-size: 1rem;
+    opacity: 0.35;
 }
 
-.toggle-switch input:checked + label::before {
-    left: 50%;
-}
-  body {
-    margin: 0;
-    min-height: 100vh;
-
-    background:
-        /* soft curved light streaks */
-        linear-gradient(
-            140deg,
-            transparent 35%,
-            rgba(255,255,255,0.18) 42%,
-            transparent 50%
-        ),
-        linear-gradient(
-            300deg,
-            transparent 30%,
-            rgba(200,255,255,0.12) 38%,
-            transparent 45%
-        ),
-
-        /* neon lime bloom */
-        radial-gradient(
-            55% 45% at 65% 55%,
-            rgba(150, 255, 130, 0.38),
-            transparent 68%
-        ),
-
-        /* aqua sweep */
-        radial-gradient(
-            65% 40% at 30% 65%,
-            rgba(70, 210, 220, 0.5),
-            transparent 72%
-        ),
-
-        /* deep base ocean */
-        linear-gradient(
-            160deg,
-            #063f4a 0%,
-            #075f66 35%,
-            #0a7b74 60%,
-            #1a8b5a 100%
-        );
-
-    background-attachment: fixed;
-    background-blend-mode: screen, screen, lighten, lighten, normal;
+.leaderboard thead th {
+    border: solid 1px var(--color-4);
 }
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
-
-    mix-blend-mode: soft-light;
-    opacity: 0.25;
+/* Rounded corners */
+.leaderboard thead th:first-child {
+    border-top-left-radius: 16px;
 }
 
-</style>
+.leaderboard thead th:last-child {
+    border-top-right-radius: 16px;
+}
 
-<!-- ================= DATA ================= -->
-<script>
-const SCORE_DETAILS = {{ score_details | tojson }};
-const CURRENT_USER_ID = {{ current_user_id }};
-</script>
-
-<!-- ================= SCRIPT ================= -->
-<script>
-
-
-const viewToggle = document.getElementById("viewToggle");
-
-viewToggle.addEventListener("change", () => {
-    if (viewToggle.checked) {
-        // Show Table, Hide Ranking
-        rankingView.style.display = "none";
-        tableView.style.display = "block";
-    } else {
-        // Show Ranking, Hide Table
-        rankingView.style.display = "block";
-        tableView.style.display = "none";
+/* Responsive improvements */
+@media (max-width: 900px) {
+    .leaderboard {
+        font-size: 0.85rem;
     }
-});
+
+    .total-cell {
+        font-size: 1.1rem;
+    }
+}
 
 
-// Modal logic
-const modal = document.getElementById("scoreModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
+.table-card {
+    padding: 1.2rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.4);
+}
 
-document.querySelectorAll(".score-cell").forEach(cell => {
-    cell.addEventListener("click", () => {
-        const userId = cell.dataset.userId;
-        const eventId = cell.dataset.eventId;
-        const score = cell.dataset.score;
 
-        modalTitle.textContent = `${cell.dataset.user} – ${cell.dataset.event} (${score} pts)`;
+/* ================= EVENT WINNER HIGHLIGHT ================= */
 
-        modalBody.innerHTML = "";
-        const clickedRows = SCORE_DETAILS?.[userId]?.[eventId] || [];
-        const currentRows = SCORE_DETAILS?.[CURRENT_USER_ID]?.[eventId] || [];
-        const maxRows = Math.max(clickedRows.length, currentRows.length);
+.score-cell.event-winner {
+    background: linear-gradient(
+        135deg,
+        var(--bright-fern),
+        var(--color-3)
+    );
+    color: var(--dark-teal);
+    font-weight: 800;
+    box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.6),
+        0 4px 10px rgba(0,0,0,0.15);
+}
 
-        for (let i = 0; i < maxRows; i++) {
-            const clickedRow = clickedRows[i] || { rider: "-", position: "-", points: "-" };
-            const currentRow = currentRows[i] || { rider: "-", position: "-", points: "-" };
+/* Small crown indicator */
+.score-cell.event-winner::before {
+    content: "🥇";
+    position: absolute;
+    top: -4px;
+    left: -1px;
+    font-size: 1rem;
+}
 
-            modalBody.innerHTML += `
-                <tr>
-                    <td>${clickedRow.rider}</td>
-                    <td>${clickedRow.position ?? "-"}</td>
-                    <td><strong>${clickedRow.points ?? "-"}</strong></td>
-                    <td>${currentRow.rider}</td>
-                    <td>${currentRow.position ?? "-"}</td>
-                    <td><strong>${currentRow.points ?? "-"}</strong></td>
-                </tr>
-            `;
+    /* Modal */
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: var(--color-2);
+        padding: 1.5rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+    }
+
+    .modal-close {
+        float: right;
+        font-size: 1.4rem;
+        cursor: pointer;
+    }
+
+    .modal-table {
+        width: 100%;
+        margin-top: 1rem;
+        border-collapse: collapse;
+    }
+
+    .modal-table th,
+    .modal-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+        .update-btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        background: var(--color-6);
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s ease;
+    }
+
+    .update-btn:hover {
+        background: var(--color-5);
+    }
+
+    .toggle-container {
+        display: flex;
+        justify-content: center;  /* horizontally center */
+        margin-bottom: 2rem;     /* spacing from leaderboard */
+    }
+
+    .toggle-switch {
+        width: 40%;
+        position: relative;
+        user-select: none;
+        margin-bottom: 2rem;
+    }
+
+    .toggle-switch input {
+        display: none;
+    }
+
+    .toggle-switch label {
+        display: flex;
+        background: var(--alabaster-grey);
+        border-radius: 30px;
+        border: 5px solid var(--color-1);
+        padding: 5px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .toggle-switch .toggle-option {
+        flex: 1;
+        text-align: center;
+        font-weight: 600;
+        z-index: 2;
+        color: var(--color-4);
+        transition: color 0.2s;
+        padding: 8px 0;
+    }
+
+    .toggle-switch input:checked + label .toggle-ranking {
+        color: var(--color-4);
+    }
+
+    .toggle-switch input:checked + label .toggle-table {
+        color: white;
+    }
+
+    .toggle-switch label::before {
+        content: "";
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        background: var(--powder-blue);
+        border-radius: 30px;
+        top: 0;
+        left: 0;
+        transition: all 0.3s ease;
+        z-index: 1;
+    }
+
+    .toggle-switch input:checked + label::before {
+        left: 50%;
+    }
+      body {
+        margin: 0;
+        min-height: 100vh;
+
+        background:
+            /* soft curved light streaks */
+            linear-gradient(
+                140deg,
+                transparent 35%,
+                rgba(255,255,255,0.18) 42%,
+                transparent 50%
+            ),
+            linear-gradient(
+                300deg,
+                transparent 30%,
+                rgba(200,255,255,0.12) 38%,
+                transparent 45%
+            ),
+
+            /* neon lime bloom */
+            radial-gradient(
+                55% 45% at 65% 55%,
+                rgba(150, 255, 130, 0.38),
+                transparent 68%
+            ),
+
+            /* aqua sweep */
+            radial-gradient(
+                65% 40% at 30% 65%,
+                rgba(70, 210, 220, 0.5),
+                transparent 72%
+            ),
+
+            /* deep base ocean */
+            linear-gradient(
+                160deg,
+                #063f4a 0%,
+                #075f66 35%,
+                #0a7b74 60%,
+                #1a8b5a 100%
+            );
+
+        background-attachment: fixed;
+        background-blend-mode: screen, screen, lighten, lighten, normal;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+
+        mix-blend-mode: soft-light;
+        opacity: 0.25;
+    }
+
+    </style>
+
+    <!-- ================= DATA ================= -->
+    <script>
+    const SCORE_DETAILS = {{ score_details | tojson }};
+    const CURRENT_USER_ID = {{ current_user_id }};
+    </script>
+
+    <!-- ================= SCRIPT ================= -->
+    <script>
+
+
+    const viewToggle = document.getElementById("viewToggle");
+
+    viewToggle.addEventListener("change", () => {
+        if (viewToggle.checked) {
+            // Show Table, Hide Ranking
+            rankingView.style.display = "none";
+            tableView.style.display = "block";
+        } else {
+            // Show Ranking, Hide Table
+            rankingView.style.display = "block";
+            tableView.style.display = "none";
         }
-
-        modal.style.display = "flex";
     });
-});
 
-document.querySelector(".modal-close").onclick = () => {
-    modal.style.display = "none";
-};
 
-window.onclick = e => {
-    if (e.target === modal) modal.style.display = "none";
-};
+    // Modal logic
+    const modal = document.getElementById("scoreModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    document.querySelectorAll(".score-cell").forEach(cell => {
+        cell.addEventListener("click", () => {
+            const userId = cell.dataset.userId;
+            const eventId = cell.dataset.eventId;
+            const score = cell.dataset.score;
+
+            modalTitle.textContent = `${cell.dataset.user} – ${cell.dataset.event}`;
+
+            modalBody.innerHTML = "";
+            const clickedRows = SCORE_DETAILS?.[userId]?.[eventId] || [];
+            const currentRows = SCORE_DETAILS?.[CURRENT_USER_ID]?.[eventId] || [];
+            const maxRows = Math.max(clickedRows.length, currentRows.length);
+
+            for (let i = 0; i < maxRows; i++) {
+                const clickedRow = clickedRows[i] || { rider: "-", position: "-", points: "-" };
+                const currentRow = currentRows[i] || { rider: "-", position: "-", points: "-" };
+
+                modalBody.innerHTML += `
+                    <tr>
+                        <td>${clickedRow.rider}</td>
+                        <td>${clickedRow.position ?? "-"}</td>
+                        <td><strong>${clickedRow.points ?? "-"}</strong></td>
+                        <td>${currentRow.rider}</td>
+                        <td>${currentRow.position ?? "-"}</td>
+                        <td><strong>${currentRow.points ?? "-"}</strong></td>
+                    </tr>
+                `;
+            }
+
+            modal.style.display = "flex";
+        });
+    });
+
+    document.querySelector(".modal-close").onclick = () => {
+        modal.style.display = "none";
+    };
+
+    window.onclick = e => {
+        if (e.target === modal) modal.style.display = "none";
+    };
+    </script>
+<script>
+function highlightEventWinners() {
+    const table = document.querySelector(".leaderboard");
+    if (!table) return;
+
+    const rows = Array.from(table.querySelectorAll("tbody tr"));
+    const headerCells = table.querySelectorAll("thead th");
+
+    // Event columns start at index 2 (User, Total, then events)
+    for (let colIndex = 2; colIndex < headerCells.length; colIndex++) {
+        let maxScore = null;
+        let cells = [];
+
+        rows.forEach(row => {
+            const cell = row.children[colIndex];
+            const value = Number(cell.dataset.score);
+
+            if (!isNaN(value)) {
+                cells.push({ cell, value });
+                if (maxScore === null || value > maxScore) {
+                    maxScore = value;
+                }
+            }
+        });
+
+        // Highlight all max-score cells (handles ties)
+        cells.forEach(({ cell, value }) => {
+            if (value === maxScore && maxScore > 0) {
+                cell.classList.add("event-winner");
+            }
+        });
+    }
+}
+
+// Run on load
+highlightEventWinners();
 </script>
 
-{% endblock %}
+    {% endblock %}
