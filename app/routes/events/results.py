@@ -13,7 +13,7 @@ def load_results(event_id):
     event = Event.query.get_or_404(event_id)
 
     # Block if event is final
-    if getattr(event, "final", False):
+    if getattr(event, "results_final", False):
         return jsonify({"status": "already_loaded"})
 
     event_code = current_app.config["EVENT_CODE"]
@@ -29,45 +29,69 @@ def load_results(event_id):
     if not data:
         return jsonify({"status": "not_available"})
 
-    added = 0
-    position = 1
-
     for entry in data:
-        skater = entry.get("competitor", {}).get("skater")
-        if not skater:
-            continue
-
-        rider = Rider.query.get(skater["id"])
-        if not rider:
-            continue
-
-        # Store time exactly as received
+        position = entry.get("rank")
+        if position == None:
+            position = 999
         formatted_time = entry.get("time")
+        if entry.get("type") == "team":
+            country_id = entry.get("id")
+            # Store time exactly as received
+            formatted_time = entry.get("time")
 
-        # Check existing result
-        existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=rider.id).first()
-        if existing_result:
-            existing_result.position = position
-            existing_result.end_time = formatted_time
-        else:
-            db.session.add(
-                EventResult(
-                    event_id=event.id,
-                    rider_id=rider.id,
-                    position=position,
-                    end_time=formatted_time,
+            # Check existing result
+            existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=country_id).first()
+            if existing_result:
+                existing_result.position = position
+                existing_result.end_time = formatted_time
+            else:
+                db.session.add(
+                    EventResult(
+                        event_id=event.id,
+                        rider_id=country_id,
+                        position=position,
+                        end_time=formatted_time,
+                    )
                 )
-            )
+        else:
+            skater = entry.get("competitor", {}).get("skater")
+            if not skater:
+                continue
+            position = entry.get("rank")
+            if position == None:
+                position = 999
+            rider = Rider.query.get(skater["id"])
+            if not rider:
+                continue
 
-        added += 1
-        position += 1
+            # Check existing result
+            existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=rider.id).first()
+            if existing_result:
+                existing_result.position = position
+                existing_result.end_time = formatted_time
+            else:
+                db.session.add(
+                    EventResult(
+                        event_id=event.id,
+                        rider_id=rider.id,
+                        position=position,
+                        end_time=formatted_time,
+                    )
+                )
 
     db.session.commit()
 
-    # Mark event final if all competitors have results
-    if added == len(data):
-        event.final = True
-        db.session.commit()
-        return jsonify({"status": "loaded_final"})
-
-    return jsonify({"status": "loaded_partial"})
+    if data[-1].get("status") is not None:
+        if data[0]['type'] == 'ms':
+            if data[0]['laps'][15]['sprintPoints'] == 60:
+                event.results_final = True
+                db.session.commit()
+                return jsonify({"status": "loaded_final"})
+            else:
+                return jsonify({"status": "loaded_partial"})
+        else:
+            event.results_final = True
+            db.session.commit()
+            return jsonify({"status": "loaded_final"})
+    else:
+        return jsonify({"status": "loaded_partial"})

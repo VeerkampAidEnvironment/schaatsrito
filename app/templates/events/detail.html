@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="title-wrapper">
-<h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
+
 
 {% if future %}
+<div class="title-wrapper">
+<h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
   {% if prediction %}
     <div class="prediction-status submitted">
       ✅ You have submitted a prediction.
@@ -75,9 +76,21 @@
 
 </form>
 {% else %}
+<div class="title-wrapper">
+<h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
+  {% if event.results %}
+  {% if event.results_final %}
+  <h2 class="event-status final">Result is final</h2>
+  {% else %}
+  <h2 class="event-status provisional">Provisional result</h2>
+  {% endif %}
+  {% endif %}
+</div>
 
-{% if not results_loaded %}
-  <button
+
+<div id="results-status" style="margin-bottom: 1rem;"></div>
+{% if not event.results_final %}
+<button
     type="button"
     id="load-results-btn"
     class="btn-submit"
@@ -88,13 +101,7 @@
     {% else %}
       Load official results
     {% endif %}
-  </button>
-
-  <div id="results-status" style="margin-bottom: 1rem;">
-    {% if results and not event.final %}
-      ⚠️ Results are not final yet.
-    {% endif %}
-  </div>
+</button>
 {% endif %}
 
 {% if results %}
@@ -427,11 +434,12 @@
 
 /* ===== RESULTS CONTAINER ===== */
 .results-container {
-    display: flex;
+    display: grid;
     flex-direction: column;
     gap: 1rem;
     max-width: 800px;
     margin: 0 auto;
+    grid-template-columns: repeat(2, 1fr);
 }
 
 /* ===== RESULT CARD ===== */
@@ -691,6 +699,27 @@ body::before {
   width: 100%;
   gap: 1rem;                   /* optional spacing between items */
   flex-wrap: wrap;             /* allow wrapping on small screens */
+}
+h2.event-status {
+  font-size: 1rem;          /* prominent but smaller than main title */
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+/* Final result */
+h2.event-status.final {
+  background-color: var(--mint-leaf); /* bright, positive green */
+  color: var(--dark-teal-2);
+  border: 2px solid var(--medium-jungle);
+}
+
+/* Provisional / not final */
+h2.event-status.provisional {
+  background-color: var(--golden-sand); /* soft amber/orange */
+  color: var(--dark-teal);
+  border: 2px solid var(--stormy-teal);
 }
 
 

@@ -95,9 +95,9 @@
             <div class="card-status">
                 {% if event.start_datetime < now %}
                     {% if event.results_final %}
-                        <span class="status-text">Event ongoing</span>
+                        <span class="status-text">Event finished</span>
                     {% else %}
-                    <span class="status-text">Event finished</span>
+                        <span class="status-text">Event ongoing</span>
                     {% endif %}
                 {% else %}
                     <span class="countdown-timer timer"

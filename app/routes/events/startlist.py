@@ -54,7 +54,6 @@ def load_startlist(event_id):
             team = entry.get("team")
             if not team or not team.get("name"):
                 continue
-
             team_name = team["name"]
             # Check if this team already exists as a Rider
             rider = Rider.query.filter_by(name=team_name).first()
@@ -64,7 +63,8 @@ def load_startlist(event_id):
                     country=team.get("country"),
                     gender=team.get("gender"),
                     profile=None,
-                    photo=None
+                    photo=None,
+                    id=int(entry.get("id"))
                 )
                 db.session.add(rider)
                 db.session.flush()

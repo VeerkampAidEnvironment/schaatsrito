@@ -3,14 +3,15 @@ from flask_login import login_required, current_user
 from app.models import Event, Prediction, Rider
 from app import db
 from . import events_bp
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @events_bp.route("/events/<int:event_id>", methods=["GET", "POST"])
 @login_required
 def event_detail(event_id):
     event = Event.query.get_or_404(event_id)
-    now = datetime.utcnow()
+    now_utc = datetime.utcnow()
+    now = now_utc + timedelta(hours=1)
 
     prediction = Prediction.query.filter_by(user_id=current_user.id, event_id=event.id).first()
 
