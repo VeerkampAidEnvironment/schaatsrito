@@ -63,3 +63,4 @@ def login_register():
 def logout():
     logout_user()
     return redirect(url_for("auth.login_register"))
+
