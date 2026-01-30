@@ -17,7 +17,8 @@
             <div class="gender-title">Vrouwen</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
-                {% if gender == 'Women' %}
+                {% set gender = event.gender %}
+                {% if gender == 'F' %}
                     <a href="#event-{{ event.id }}"
                        data-target="event-{{ event.id }}"
                        class="event-link
@@ -45,7 +46,8 @@
         <div class="gender-title">Mannen</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
-                {% if gender == 'Men' %}
+                {% set gender = event.gender %}
+                {% if gender == 'M' %}
                     <a href="#event-{{ event.id }}"
                        data-target="event-{{ event.id }}"
                        class="event-link
@@ -84,6 +86,7 @@
 
             <!-- Top row: Event name (left) & Gender (right) -->
             {% set event_name, gender = event.name.rsplit(' ', 1) %}
+            {% set gender = event.gender %}
             <div class="card-header">
                 <span class="event-name">{{ event_name }}</span>
                 <span class="event-gender">{{ gender }}</span>
