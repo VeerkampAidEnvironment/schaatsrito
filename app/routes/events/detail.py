@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 def event_detail(event_id):
     event = Event.query.get_or_404(event_id)
     now_utc = datetime.utcnow()
-    now = now_utc + timedelta(hours=-359)
+    now = now_utc + timedelta(hours=1)
 
     prediction = Prediction.query.filter_by(user_id=current_user.id, event_id=event.id).first()
 

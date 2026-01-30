@@ -137,13 +137,12 @@
         </div>
                 <!-- Timeline Dot / Date -->
         <div class="timeline-date {% if loop.index is even %}right{% else %}left{% endif %}" data-timestamp="{{ event.start_datetime.timestamp() }}">
-            {{ event.start_datetime.strftime('%d %b %Y - %H:%M') }}
+            {{ event.start_datetime.strftime('%d %b - %H:%M') }}
         </div>
     </div>
     {% endfor %}
 </div>
 
-<!-- Timer Script -->
 <script>
 function initTimers() {
     const timers = document.querySelectorAll('.timer');

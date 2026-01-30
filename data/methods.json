@@ -25,7 +25,7 @@
       ]
     },
     {
-      "id": "detail",
+      "id": "voorspelling",
       "title": "Mijn voorspelling",
       "text_html": "Elke afstand heeft zijn eigen pagina waar je jouw voorspelling kan invullen of de uitslag kan bekijken. Je vind elke afstand op de overzichtspagina (zie hierboven). Eerst zal elke rijder (van het juist geslacht) die aan de spelen meedoet beschikbaar staan om te selecteren. Zodra de officiële startlijst (via de ISU) beschikbaar is zal dit worden teruggebracht tot enkel de startende rijders. Elke gebruiker kan zelf checken of de officiële startlijst al beschikbaar is via de 'Officiële startlijst laden'-knop. \n Voor elke afstand dien je een eerste, tweede en derde kopman te selecteren. Meer over de puntentelling vind je onder het kopje 'puntentelling'. De eerste kopman is herkenbaar aan de gouden kaart (in het midden) de tweede kopman aan de zilveren kaart (links) en de derde kopman (brons) staat rechts op het podium. Niet tevreden met je keus? Met de <///> knop verwijder je een gekozen rijder. Wil je enkel de volgorde veranderen? Dit kan met de pijltjes of door simpelweg de rijder te slepen naar de gewenste plek. \n Let op je moet je voorspelling opslaan (via de 'Voorspelling indienen'-knop om deze definitief te maken. Zodra je je voorspelling hebt opgeslagen is dat te zien rechtsboven op de pagina. Er staat dan . Heb je je veranderde opstelling nog niet opgeslagen dan verschijnt er een waarschuwing in de podiumkaart <zie figuur>. Zodra de deadline <voeg timer toe aan detail pagina> (de officiële start van de wedstrijd) verstreken is, is het niet meer mogelijk je opstelling aan te passen. Op dit moment verandert deze pagina ook van de voorspellingspagina in de uitslagenpagina. (Zie hieronder)",
       "figures": [
@@ -53,7 +53,7 @@
       ]
     },
     {
-      "id": "detail2",
+      "id": "uitlsag",
       "title": "De uitslag",
       "text_html": "De wedstrijd kan via de afstands-pagina live gevolgd worden. Zodra de deadline is verstreken is het mogelijk om live de laatste uitslagen op te halen. Dit is mogelijk met de 'resultaat laden'-knop. Als er een nog niet volledige uitslag word weergegeven is dat rechtsboven te zien. Zodra de uitslag volledig is, is dat te herkennen aan 'Definitief resultaat'. Jouw rijders en hun behaalde score worden op de uitslagenpagina uitgelicht zodat je direct live kan zien hoe ze het doen. Ben je benieuwd hoe je het ten opzicht van de anderen het hebt gedaan? Ga dan naar de <///> pagina. je vind de uitleg bij <///>",
       "figures": [
@@ -72,7 +72,7 @@
       "text_html": "Bij elke afstand kun je met jouw drie gekozen rijders punten scoren. <li> <strong>Basispunten</strong> - Hoe hoger jouw rijder eindigt, hoe meer punten deze verdient. Hieronder vind je per klassering de basis-score <///>.</li> Mocht u zich nu afvragen wat 'basisscore' betekent, paniekeer dat niet dat word nu allemaal uitgelegd. Naast de directe punten voor de klassering is het namelijk mogelijk jouw rijders nog beter te laten scoren. <li> <strong> Kopmanpunten</strong> - Allereerst door een eerste, tweede en derde rijder te kiezen. De punten van jouw eerste rijder worden namelijk met 2x vermenigvuldigd, de punten van de tweede rijder met 1.5x en de derde rijder verdient zijn basispunten <///>. </li> <li> <strong>Originaliteits-punten</strong> - Dan is er nog een derde manier om te scoren. Hoe minder deelnemers jouw rijder hebben gekozen, hoe meer punten jouw rijder kan halen. Hoe dit werkt zie je hieronder <///></li> Het overzicht van de volledige puntentelling zie je hieronder <///>",
       "figures": [
         {
-          "id": "puntentelling",
+          "id": "puntentelling-foto",
           "path": "images/methode/puntentelling.jpeg",
           "alt": "",
           "caption": "De puntentelling met links de invloed van de 3 categoriën. Rechts de score voor elk scenario. Voorbeeld, een tweede kopman (x1.5) die door minder dan 25% van de spelers gekozen is(x1.25) en die derde word (55 punten) levert 55*1.5*1.25=103punten op.",
