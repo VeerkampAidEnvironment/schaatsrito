@@ -318,6 +318,15 @@ document.addEventListener("DOMContentLoaded", () => {
     background: #007BFF;
     color: #fff;
 }
+
+@media (max-width: 768px) {
+    /* Hide entire event navigation on mobile */
+    .event-nav-wrapper {
+        display: none;
+    }
+
+}
+
 </style>
 
 {% endblock %}
