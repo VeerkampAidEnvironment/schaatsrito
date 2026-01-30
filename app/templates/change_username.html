@@ -5,7 +5,8 @@
 
 <form method="POST">
     <div>
-        <label for="username">New username</label>
+        <div>Huidige naam: {{current_user.username}}</div>
+        <label for="username">Nieuwe naam</label>
         <input
             type="text"
             name="username"
@@ -15,7 +16,7 @@
         >
     </div>
 
-    <button type="submit">Update username</button>
+    <button type="submit">Verander naam</button>
 </form>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
