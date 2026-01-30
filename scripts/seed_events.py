@@ -2,7 +2,7 @@ import click
 from flask.cli import with_appcontext
 from app import db
 from app.models import Event
-from data.events_static_real import EVENTS
+from data.event_static_Inzell import EVENTS
 
 from datetime import datetime
 

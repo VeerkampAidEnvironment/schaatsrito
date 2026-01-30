@@ -33,12 +33,12 @@ def load_results(event_id):
         position = entry.get("rank")
         if position == None:
             position = 999
+        laps = entry.get("laps")
         formatted_time = entry.get("time")
         if entry.get("type") == "team":
             country_id = entry.get("id")
             # Store time exactly as received
             formatted_time = entry.get("time")
-
             # Check existing result
             existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=country_id).first()
             if existing_result:
@@ -51,6 +51,7 @@ def load_results(event_id):
                         rider_id=country_id,
                         position=position,
                         end_time=formatted_time,
+                        laps=laps
                     )
                 )
         else:
@@ -62,9 +63,7 @@ def load_results(event_id):
                 position = 999
             rider = Rider.query.get(skater["id"])
             if not rider:
-                continue
-
-            # Check existing result
+                continue            # Check existing result
             existing_result = EventResult.query.filter_by(event_id=event.id, rider_id=rider.id).first()
             if existing_result:
                 existing_result.position = position
@@ -76,6 +75,7 @@ def load_results(event_id):
                         rider_id=rider.id,
                         position=position,
                         end_time=formatted_time,
+                        laps=laps
                     )
                 )
 

@@ -123,15 +123,38 @@
         {% endif %}
       </div>
       <div class="time">{{ row.endtime }}</div>
-
       <div class="result-info">
-          <div class="result-name">
-            {{ row.rider.name }}
-            <img src="https://live.isuresults.eu/assets/images/flags/{{ row.rider.country }}.svg" height="10px">
-          </div>
-          <div class="result-time">
-            {{ row.end_time }}
-          </div>
+            <div class="result-name">
+              {{ row.rider.name }}
+              <img src="https://live.isuresults.eu/assets/images/flags/{{ row.rider.country }}.svg" height="10px">
+            </div>
+            <div class="result-time">{{ row.end_time }}</div>
+            {% if row.laps %}
+            <button type="button" class="lap-toggle-btn">Toon tussentijden ▼</button>
+            <div class="lap-details">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ronde</th>
+                    <th>Ronde-tijd</th>
+                    <th>Tussentijd</th>
+                    <th>Positie</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for lap in row.laps %}
+                  <tr>
+                    <td>{{ lap.number }}</td>
+                    <td>{{ lap.time }}</td>
+                    <td>{{ lap.passageTime }}</td>
+                    <td>{{ lap.rank }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% endif %}
+
           {% if prediction %}
             {% if row.rider.id == prediction.rider_1_id %}
               <div class="result-points">
@@ -500,7 +523,6 @@
 /* ===== RESULT CARD ===== */
 .result-card {
     min-width:100%;
-    height:100px;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -579,7 +601,7 @@
     background: var(--alabaster-grey);
     text-align: center;
     width: 90px;
-    height:90px
+    height:90px;
 }
 
 .result-points a {
@@ -594,9 +616,10 @@
 /* Adjust for small screens */
 @media (max-width: 600px) {
     .result-points {
-        font-size: 1rem;
+        font-size: 0.8rem;
         padding: 0.2rem 0.5rem;
-        min-width: 50px;
+        width: 50px;
+        height: 75px
     }
 }
 
@@ -613,7 +636,11 @@
 /* RESPONSIVE */
 @media (max-width: 600px) {
     .results-container {
-        gap: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        overflow-x: auto;
+        gap: 1rem;
+        padding-bottom: 0.5rem; /* optional for scrollbar space */
     }
     .result-card {
         gap: 0.5rem;
@@ -628,6 +655,27 @@
         width: 1.5rem;
         color: black;
     }
+      /* Hide lap toggle button */
+  .lap-toggle-btn {
+    display: none !important;
+  }
+
+  /* Hide lap details table */
+  .lap-details {
+    display: none !important;
+  }
+
+  /* Ensure result info stays full width and horizontal */
+  .result-card {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .result-info {
+    display: flex !important;
+    flex-direction: column;
+    flex-grow: 1;
+  }
 }
 /* ================= PRIMARY SUBMIT BUTTON ================= */
 #submit-btn {
@@ -808,6 +856,44 @@ h2.event-status.provisional {
   margin-top: 0.5rem;
   text-align: center;
 }
+.result-card {
+    min-width:100%;
+    /* keep other existing styles */
+    transition: all 0.3s ease; /* smooth expand/shrink */
+    overflow: hidden;           /* prevents overflow when collapsed */
+}
+
+.lap-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    margin-top: 0.5rem;
+    background-color: var(--alabaster-grey);
+    opacity:0.5;
+    border-radius: 8px;
+    color: var(--color-1);
+}
+
+.lap-details table {
+    width: 60%;
+    border-collapse: collapse;
+}
+
+.lap-details th, .lap-details td {
+    border: 1px solid var(--color-1);
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+}
+
+.lap-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--color-3);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
 
 </style>
 
@@ -1177,6 +1263,28 @@ function initTimers() {
 }
 
 document.addEventListener("DOMContentLoaded", initTimers);
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".lap-toggle-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const card = btn.closest(".result-card");
+            const details = card.querySelector(".lap-details");
+            if (!details) return;
+
+            if (details.style.maxHeight && details.style.maxHeight !== "0px") {
+                // collapse
+                details.style.maxHeight = "0px";
+                btn.textContent = "Toon tussentijden ▼";
+            } else {
+                // expand
+                details.style.maxHeight = details.scrollHeight + "px";
+                btn.textContent = "Verberg tussentijden ▲";
+            }
+        });
+    });
+});
+
 </script>
 
 <!-- ================= PROFILE MODAL ================= -->

@@ -2,6 +2,7 @@ from app import db, login_manager
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import JSON
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -57,7 +58,7 @@ class EventResult(db.Model):
     rider_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
     position = db.Column(db.Integer, nullable=False)
     end_time = db.Column(db.String(20))  # <-- change from Float to String
-
+    laps = db.Column(JSON, nullable=True)  # <-- here
 
     rider = db.relationship(
         "Rider",
