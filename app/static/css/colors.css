@@ -1,14 +1,22 @@
 :root {
-    --color-1: #02687E; /* Deep teal-blue */
-    --color-2: #BAD8C9; /* Soft mint green */
-    --color-3: #6CC239; /* Vibrant lime green */
-    --color-4: #155257; /* Dark teal */
-    --color-5: #249B4E; /* Medium green */
-    --color-6: #10ADAF; /* Aqua / cyan */
-    --medium-jungle: #14AD5Fff;
-    --white: #FFFFFFff;
-    --black: #010100ff;
-    --alabaster-grey: #D9E0E5ff;
-    --powder-blue: #A2B7C5ff;
+  --color-1: #02687E; /* Deep teal-blue */
+  --color-2: #BAD8C9; /* Soft mint green */
+  --color-3: #6CC239; /* Vibrant lime green */
+  --color-4: #155257; /* Dark teal */
+  --color-5: #249B4E; /* Medium green */
+  --color-6: #10ADAF; /* Aqua / cyan */
+  --white: #FFFFFFff;
+  --black: #010100ff;
+  --alabaster-grey: #D9E0E5ff;
+  --powder-blue: #A2B7C5ff;
+  --celadon: #B5D4B4ff;
+  --lime-green: #46C63Eff;
+  --dark-teal: #0F535Fff;
+  --dark-teal-2: #154A53ff;
+  --bright-fern: #74C521ff;
+  --golden-sand: #C4C55Aff;
+  --mint-leaf: #53C4A6ff;
+  --stormy-teal: #086F72ff;
+  --medium-jungle: #14A834ff;
+  --moss-green: #7FBC58ff;
 }
-

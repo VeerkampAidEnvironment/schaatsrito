@@ -75,9 +75,23 @@ class Prediction(db.Model):
     rider_2_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
     rider_3_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
 
-    score = db.Column(db.Integer)
+    score = db.Column(db.Integer, default=0)
+    # rider 1
+    rider_1_base = db.Column(db.Integer, default=0)
+    rider_1_captain = db.Column(db.Float, default=1.0)
+    rider_1_rarity = db.Column(db.Float, default=1.0)
     rider_1_score = db.Column(db.Integer, default=0)
+
+    # rider 2
+    rider_2_base = db.Column(db.Integer, default=0)
+    rider_2_captain = db.Column(db.Float, default=1.0)
+    rider_2_rarity = db.Column(db.Float, default=1.0)
     rider_2_score = db.Column(db.Integer, default=0)
+
+    # rider 3
+    rider_3_base = db.Column(db.Integer, default=0)
+    rider_3_captain = db.Column(db.Float, default=1.0)
+    rider_3_rarity = db.Column(db.Float, default=1.0)
     rider_3_score = db.Column(db.Integer, default=0)
 
     rider_1 = db.relationship("Rider", foreign_keys=[rider_1_id])

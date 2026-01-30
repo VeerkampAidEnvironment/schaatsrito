@@ -42,13 +42,32 @@ def leaderboard():
                     user_event_scores[user.id][event.id] = pred.score
                     results = {r.rider_id: r.position for r in EventResult.query.filter_by(event_id=event.id).all()}
 
+                    # Include subscores
                     score_details[user.id][event.id] = [
-                        {"rider": pred.rider_1.name, "position": results.get(pred.rider_1_id),
-                         "points": pred.rider_1_score},
-                        {"rider": pred.rider_2.name, "position": results.get(pred.rider_2_id),
-                         "points": pred.rider_2_score},
-                        {"rider": pred.rider_3.name, "position": results.get(pred.rider_3_id),
-                         "points": pred.rider_3_score}
+                        {
+                            "rider": pred.rider_1.name,
+                            "position": results.get(pred.rider_1_id),
+                            "points": pred.rider_1_score,
+                            "base": pred.rider_1_base,
+                            "captain": pred.rider_1_captain,
+                            "rarity": pred.rider_1_rarity
+                        },
+                        {
+                            "rider": pred.rider_2.name,
+                            "position": results.get(pred.rider_2_id),
+                            "points": pred.rider_2_score,
+                            "base": pred.rider_2_base,
+                            "captain": pred.rider_2_captain,
+                            "rarity": pred.rider_2_rarity
+                        },
+                        {
+                            "rider": pred.rider_3.name,
+                            "position": results.get(pred.rider_3_id),
+                            "points": pred.rider_3_score,
+                            "base": pred.rider_3_base,
+                            "captain": pred.rider_3_captain,
+                            "rarity": pred.rider_3_rarity
+                        }
                     ]
                 else:
                     # Past event but no score yet

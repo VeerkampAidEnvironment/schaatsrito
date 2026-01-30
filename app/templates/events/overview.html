@@ -14,10 +14,10 @@
     <!-- Men -->
     <div class="event-gender-section">
         <div class="event-nav">
-            <div class="gender-title">Men</div>
+            <div class="gender-title">Vrouwen</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
-                {% if gender == 'Men' %}
+                {% if gender == 'Women' %}
                     <a href="#event-{{ event.id }}"
                        data-target="event-{{ event.id }}"
                        class="event-link
@@ -42,10 +42,10 @@
     <!-- Women -->
     <div class="event-gender-section">
         <div class="event-nav">
-        <div class="gender-title">Women</div>
+        <div class="gender-title">Mannen</div>
             {% for event in events %}
                 {% set event_name, gender = event.name.rsplit(' ', 1) %}
-                {% if gender == 'Women' %}
+                {% if gender == 'Men' %}
                     <a href="#event-{{ event.id }}"
                        data-target="event-{{ event.id }}"
                        class="event-link
@@ -95,9 +95,9 @@
             <div class="card-status">
                 {% if event.start_datetime < now %}
                     {% if event.results_final %}
-                        <span class="status-text">Event finished</span>
+                        <span class="status-text">Evenement afgelopen</span>
                     {% else %}
-                        <span class="status-text">Event ongoing</span>
+                        <span class="status-text">Evenement bezig</span>
                     {% endif %}
                 {% else %}
                     <span class="countdown-timer timer"
@@ -110,12 +110,12 @@
             {% if event.id in user_predictions %}
                 {% if event.start_datetime > now %}
                 <div class="card-prediction">
-                    <span class="badge predicted">Prediction submitted</span>
+                    <span class="badge predicted">Voorspelling ingediend</span>
                 </div>
                 {% endif %}
             {% elif event.start_datetime >= now %}
                 <div class="card-prediction">
-                    <span class="badge open">No prediction yet</span>
+                    <span class="badge open">Nog geen voorspelling</span>
                 </div>
             {% endif %}
             </div>
@@ -123,13 +123,13 @@
             <a class="btn {% if event.start_datetime < now %}result-btn{% else %}predict-btn{% endif %}"
                href="{{ url_for('events.event_detail', event_id=event.id) }}">
                 {% if event.start_datetime < now %}
-                    🏁 See result
+                    🏁 Bekijk resultaat
                 {% else %}
 
                 {% if event.id in user_predictions %}
-                    🖉️ Change prediction
+                    🖉️ Voorspelling aanpassen
                 {% else %}
-                    ✍️ Make prediction
+                    ✍️ Voorspelling maken
                 {% endif %}
 
                 {% endif %}
@@ -156,7 +156,7 @@ function initTimers() {
             let diff = startTime - currentTime;
 
             if (diff <= 0) {
-                timerEl.textContent = "Event started!";
+                timerEl.textContent = "Evenement gestart!";
                 return;
             }
 
@@ -170,7 +170,7 @@ function initTimers() {
 
             timerEl.textContent =
                 (days > 0 ? days + "d " : "") +
-                (hours < 10 ? "0" : "") + hours + "h " +
+                (hours < 10 ? "0" : "") + hours + "u " +
                 (minutes < 10 ? "0" : "") + minutes + "m " +
                 (seconds < 10 ? "0" : "") + seconds + "s";
 
@@ -233,22 +233,23 @@ document.addEventListener("DOMContentLoaded", () => {
     top: 0;
     z-index: 1000;
     background: transparent;
-    padding: 15px 0;
-    width:80%;
-    left:10%;
+    padding: 40px 0;
+    width: 80%;
+    display: grid;
+    grid-template-columns: auto auto;
+    margin:auto;
 }
 
 .event-nav {
     position: sticky;
     display: flex;
-    flex-wrap: wrap;          /* 👈 allow multiple rows */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
 
     padding: 8px;
     margin: 0 auto;
-    max-width: 100%;         /* 👈 prevents ultra-wide pills */
-
+    width: 80%;
     background: var(--color-2);
     border-radius: 50px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
@@ -278,7 +279,6 @@ document.addEventListener("DOMContentLoaded", () => {
     transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
-/* Navigation state colors */
 
 /* Events that already started */
 .event-nav a.started {
@@ -288,13 +288,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* Events with prediction submitted */
 .event-nav a.predicted {
-    background: var(--color-5); /* Medium green */
+    background: var(--color-5);
     color: #fff;
 }
 
 /* Events open for prediction */
 .event-nav a.open {
-    background: var(--color-1); /* Deep teal-blue */
+    background: var(--color-1);
     color: #fff;
 }
 
@@ -310,7 +310,6 @@ document.addEventListener("DOMContentLoaded", () => {
 .timeline {
     margin-top: 15px;
 }
-
 
 /* Optional: highlight active event link when scrolled */
 .event-nav a.active {

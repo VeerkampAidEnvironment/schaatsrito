@@ -86,7 +86,6 @@ body::before {
     left: 50%;
     width: 3px;
     border-left: 7px dotted var(--color-6);
-    transform: translateX(-50%);
     z-index: 0;
 }
 
@@ -98,14 +97,11 @@ body::before {
 
 /* Left side items */
 .timeline-item.left {
-    left: 0;
-    text-align: right;
 }
 
 /* Right side items */
 .timeline-item.right {
     left: 50%;
-    text-align: left;
 }
 
 /* Add staggered vertical offsets */
@@ -126,14 +122,13 @@ body::before {
 
 .timeline-date {
     position: absolute;
-    top: 30%;                   /* vertical center of the timeline item */
+    top: 10%;                   /* vertical center of the timeline item */
     background: var(--color-1);
     width: 80px;
     height: 80px;
     border-radius: 50%;
     display: flex;
     align-items: center;       /* vertical centering */
-    justify-content: center;   /* horizontal centering */
     text-align: center;        /* center multi-line text */
     color: var(--color-2);
     font-size: 14px;
@@ -144,11 +139,12 @@ body::before {
 }
 
 .timeline-date.right:nth-of-type(2n) {
-    right:88%;
+    left: -20px;
 }
 
 .timeline-date.left:nth-of-type(2n) {
-    left:88%;
+    right: -20px; /* half the circle width */
+
 }
 
 

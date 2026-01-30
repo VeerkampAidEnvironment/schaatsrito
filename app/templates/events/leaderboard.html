@@ -6,8 +6,8 @@
     <div style="display:flex; justify-content:space-between; align-items:center;">
         <a href="{{ url_for('admin.update_scores') }}"
            class="update-btn"
-           onclick="return confirm('Recalculate all scores?');">
-            🔄 Update scores
+           onclick="return confirm('Alle scores (opnieuw) berekenen');">
+            🔄 Scores updaten
         </a>
     </div>
 
@@ -16,8 +16,8 @@
     <div class="toggle-switch">
       <input type="checkbox" id="viewToggle" />
       <label for="viewToggle">
-        <span class="toggle-option toggle-ranking">🏆 Ranking</span>
-        <span class="toggle-option toggle-table">📊 Detailed Score</span>
+        <span class="toggle-option toggle-ranking">🏆 Ranglijst</span>
+        <span class="toggle-option toggle-table">📊 Scores per afstand</span>
       </label>
     </div>
     </div>
@@ -44,8 +44,8 @@
     <table class="leaderboard">
         <thead>
             <tr>
-                <th>User</th>
-                <th>Total</th>
+                <th>Gebruiker</th>
+                <th>Totaal</th>
                 {% for event in events %}
                     <th>{{ event.name }}</th>
                 {% endfor %}
@@ -83,16 +83,16 @@
         <table class="modal-table">
             <thead>
                 <tr>
-                    <th colspan="3">Prediction</th>
-                    <th colspan="3">Your Data</th>
+                    <th colspan="3">Voorspelling</th>
+                    <th colspan="3">Jouw voorspelling</th>
                 </tr>
                 <tr>
-                    <th>Rider</th>
-                    <th>Position</th>
-                    <th>Points</th>
-                    <th>Rider</th>
-                    <th>Position</th>
-                    <th>Points</th>
+                    <th>Rijder</th>
+                    <th>Klassering</th>
+                    <th>Punten</th>
+                    <th>Rijder</th>
+                    <th>Klassering</th>
+                    <th>Punten</th>
                 </tr>
             </thead>
             <tbody id="modalBody"></tbody>
@@ -592,12 +592,21 @@
                     <tr>
                         <td>${clickedRow.rider}</td>
                         <td>${clickedRow.position ?? "-"}</td>
-                        <td><strong>${clickedRow.points ?? "-"}</strong></td>
+                        <td><strong>${
+                            clickedRow.points
+                                ? `${clickedRow.points} (${clickedRow.base ?? "-"}*${clickedRow.captain ?? "-"}*${clickedRow.rarity ?? "-"})`
+                                : "-"
+                        }</strong></td>
                         <td>${currentRow.rider}</td>
                         <td>${currentRow.position ?? "-"}</td>
-                        <td><strong>${currentRow.points ?? "-"}</strong></td>
+                        <td><strong>${
+                            currentRow.points
+                                ? `${currentRow.points} (${currentRow.base ?? "-"}*${currentRow.captain ?? "-"}*${currentRow.rarity ?? "-"})`
+                                : "-"
+                        }</strong></td>
                     </tr>
                 `;
+
             }
 
             modal.style.display = "flex";

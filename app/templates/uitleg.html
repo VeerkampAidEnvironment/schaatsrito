@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  :root {
+    /* Brand palette */
+    --ae-darkblue: #087880;        /* Deep water primary */
+    --ae-lightgreen: #C2ED45;      /* Jungle primary */
+    --ae-lightblue: #4FD4C7;       /* Aqua primary */
+    --ae-green: #36C726;           /* Land primary */
+    --ae-yellow: #FEE327;          /* Sun primary */
+
+    --ae-deepwater: #087880;
+    --ae-jungle: #C2ED45;
+    --ae-aqua: #4FD4C7;
+    --ae-land: #36C726;
+    --ae-sun: #FEE327;
+
+    --ae-orange: #EFB417;
+    --ae-aqua-dark: #61BBAC;
+    --ae-aqua-lite: #CAF1ED;
+    --ae-land-dark: #6AA848;
+    --ae-land-lite: #AEE9A8;
+    --ae-jungle-dark: #98CF37;
+    --ae-jungle-light: #EBF7C8;
+    --ae-sun-lite: #FBED97;
+
+    --ae-black: #282828;
+    --ae-white: #F8F8F8;
+
+    --ae-ice: #f6f8fb;
+  }
+
+  /* THEME TOKENS
+     - theme- classes define per-section variables used by content (headers, tables)
+     - t- classes define per-link variables used by sidebar items (dots, active states)
+  */
+  .theme-deepwater { --brand-main: var(--ae-deepwater); --brand-accent: var(--ae-lightgreen); --brand-ice: var(--ae-aqua-lite); }
+  .theme-jungle    { --brand-main: var(--ae-jungle-dark); --brand-accent: var(--ae-jungle);   --brand-ice: var(--ae-jungle-light); }
+  .theme-aqua      { --brand-main: var(--ae-aqua-dark);   --brand-accent: var(--ae-aqua);     --brand-ice: var(--ae-aqua-lite); }
+  .theme-land      { --brand-main: var(--ae-land-dark);   --brand-accent: var(--ae-land);     --brand-ice: var(--ae-land-lite); }
+  .theme-sun       { --brand-main: var(--ae-orange);      --brand-accent: var(--ae-sun);      --brand-ice: var(--ae-sun-lite); }
+
+  .t-deepwater { --t-main: var(--ae-deepwater); --t-accent: var(--ae-lightgreen); }
+  .t-jungle    { --t-main: var(--ae-jungle-dark); --t-accent: var(--ae-jungle); }
+  .t-aqua      { --t-main: var(--ae-aqua-dark); --t-accent: var(--ae-aqua); }
+  .t-land      { --t-main: var(--ae-land-dark); --t-accent: var(--ae-land); }
+  .t-sun       { --t-main: var(--ae-orange); --t-accent: var(--ae-sun); }
+
+  /* Layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  .page-head { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+  h1 { color: var(--ae-deepwater); margin: 48px 0 6px; }
+  .meta { margin-bottom: 22px; opacity: .85; }
+
+  /* Sidebar (sticky) */
+  .toc-sidebar {
+    position: sticky; top: 16px; align-self: start;
+    background: #fff; border: 1px solid var(--ae-ice);
+    border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    padding: 12px; height: max-content;
+  }
+  .toc-sidebar__title { font-weight: 700; color: var(--ae-black); margin: 6px 8px 10px; }
+  .toc-sidebar__list { list-style: none; margin: 0; padding: 0 6px 6px 6px; }
+  .toc-sidebar__item { margin: 0; padding: 0; }
+  .toc-sidebar__link {
+    display: grid; grid-template-columns: 8px 1fr; gap: 10px; align-items: center;
+    padding: 8px 8px; text-decoration: none; color: var(--ae-black); border-radius: 8px;
+  }
+  .toc-sidebar__link:hover { background: var(--ae-ice); color: var(--ae-darkblue); }
+  .toc-sidebar__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--t-main, var(--ae-aqua)); }
+  .toc-sidebar__link.is-active {
+    background: color-mix(in srgb, var(--t-accent, var(--ae-lightgreen)) 24%, white);
+    outline: 2px solid var(--t-accent, var(--ae-lightgreen));
+    color: var(--t-main, var(--ae-darkblue));
+    font-weight: 650;
+  }
+
+  /* Mobile “You’re in” pill */
+  .you-are-in {
+    display: none; background: #fff; border: 1px solid var(--ae-ice); border-radius: 999px;
+    padding: 8px 12px; margin: 12px 0 0; width: fit-content; box-shadow: 0 1px 6px rgba(0,0,0,.04);
+    color: var(--ae-black); font-weight: 600;
+  }
+  .you-are-in__title { margin-right: 8px; opacity: .75; }
+  .you-are-in select { border: 0; background: transparent; font-weight: 700; color: var(--ae-darkblue); outline: none; max-width: 80vw; }
+
+  /* Content bands */
+  .band { padding: 36px 0; }
+  .band--alt { background: var(--ae-ice); }
+
+  /* Anchor offset so active section snaps below sticky header */
+  section[id] { scroll-margin-top: 90px; }
+
+  /* Section card (theme-driven) */
+  .section-card{
+    border-radius: 14px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,.07);
+    background:#fff; border: 1px solid rgba(0,0,0,.06);
+  }
+  .section-card__head{
+    background: var(--brand-main, var(--ae-darkblue)); color:#fff;
+    padding: 14px 18px; display:flex; align-items: center; gap: 12px;
+  }
+  .section-card__eyebar{
+    width: 6px; height: 26px; border-radius: 6px;
+    background: var(--brand-accent, var(--ae-lightgreen));
+    flex: 0 0 auto;
+  }
+  .section-card__title{ margin:0; font-size: 1.25rem; line-height:1.2; font-weight:650; }
+  .section-card__body{ padding: 18px; }
+
+  /* Body text */
+  .verbatim {
+    white-space: pre-wrap; word-wrap: break-word;
+    font-family: WorkSans, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.7; font-size: 1rem; color: var(--ae-black);
+  }
+  .verbatim a { color: var(--brand-main, var(--ae-darkblue)); text-decoration: underline; }
+  .verbatim a:hover { color: var(--brand-accent, var(--ae-lightgreen)); }
+
+  /* Tables (theme-driven) */
+  .verbatim .table-responsive { overflow-x:auto; }
+  .verbatim table{
+    width:100%; border-collapse: collapse; margin: 12px 0 0; background:#fff; border: 1px solid var(--ae-ice);
+  }
+  .verbatim caption{ text-align:left; color: var(--brand-main); font-weight:600; margin-bottom:8px; }
+  .verbatim thead th{ background: var(--brand-main); color:#fff; font-weight:600; text-align:left; }
+  .verbatim th, .verbatim td{ padding: 10px 12px; border: 1px solid var(--ae-ice); vertical-align: top; }
+  .verbatim tbody tr:nth-child(even){ background: var(--brand-ice, var(--ae-ice)); }
+
+  /* Figures */
+  figure { margin: 24px 0; background:#fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden; }
+  figure img { display:block; width:100%; height:auto; }
+  figcaption { padding: 10px 14px; font-size: .95rem; }
+  .credit { opacity:.75; }
+
+  /* Multi-image figure grid */
+  .fig-grid { display:grid; grid-template-columns: repeat(var(--fig-cols, 2), minmax(0,1fr)); gap:12px; padding:12px; }
+  .fig-grid img { width:100%; height:auto; border-radius:8px; display:block; }
+
+  /* Collapsible table wrapper (theme-driven) */
+  .table-block{ border:1px solid var(--ae-ice); border-radius:10px; overflow:hidden; margin-top:16px; }
+  .table-block__bar{
+    background: var(--brand-ice, var(--ae-ice)); color: var(--ae-black);
+    display:flex; align-items:center; justify-content: space-between;
+    gap:12px; padding:10px 12px; border-bottom:1px solid var(--ae-ice);
+  }
+  .table-block__title{ margin:0; font-weight:600; font-size:1rem; }
+  .table-block__btn{
+    appearance:none; border:1px solid var(--brand-accent, var(--ae-lightgreen));
+    border-radius:8px; background:#fff; color: var(--brand-main, var(--ae-darkblue));
+    font-weight:700; padding:6px 10px; cursor:pointer;
+  }
+  .table-block__btn[aria-expanded="true"]{ background: var(--brand-accent, var(--ae-lightgreen)); color:#0a1b2b; border-color: transparent; }
+  .table-block__inner{ overflow:hidden; transition:max-height .25s ease; max-height:none; }
+  .table-block__inner.is-collapsed{ max-height:0; overflow:hidden; }
+
+  /* Responsive */
+  @media (max-width: 1024px){
+    .layout { grid-template-columns: 1fr; }
+    .toc-sidebar { display: none; }
+    .you-are-in { display: inline-flex; align-items: center; }
+  }
+</style>
+
+<div class="page-head">
+  <h1>{{ methods.title }}</h1>
+  {% if methods.last_updated %}
+    <div class="meta">Last updated: {{ methods.last_updated }}</div>
+  {% endif %}
+
+  <!-- Mobile current-chapter pill -->
+  <div class="you-are-in" id="you-are-in" aria-live="polite">
+    <span class="you-are-in__title">You’re in:</span>
+    <select id="chapterSelect" aria-label="Jump to chapter">
+      {% for s in methods.sections %}
+        <option value="#{{ s.id }}">{{ s.title }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- Sticky Sidebar TOC -->
+  {% set themes_nav = cycler('deepwater','jungle','aqua','land','sun') %}
+  <aside class="toc-sidebar" aria-label="Chapters">
+    <div class="toc-sidebar__title">Chapters</div>
+    <ul class="toc-sidebar__list">
+      {% for s in methods.sections %}
+        {% set theme_key = themes_nav.next() %}
+        <li class="toc-sidebar__item">
+          <a class="toc-sidebar__link t-{{ theme_key }}" href="#{{ s.id }}" data-id="{{ s.id }}">
+            <span class="toc-sidebar__dot" aria-hidden="true"></span>
+            <span class="toc-sidebar__text">{{ s.title }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+    {% set themes_content = cycler('theme-deepwater','theme-jungle','theme-aqua','theme-land','theme-sun') %}
+
+    {% for s in methods.sections %}
+      <section id="{{ s.id }}" class="band {% if loop.index is even %}band--alt{% endif %}">
+        {% set theme_class = themes_content.next() %}
+        <article class="section-card {{ theme_class }}">
+          <header class="section-card__head">
+            <span class="section-card__eyebar" aria-hidden="true"></span>
+            <h2 class="section-card__title">{{ s.title }}</h2>
+          </header>
+          <div class="section-card__body">
+            <div class="verbatim">{{ s.text_html|safe }}</div>
+
+
+            {% if s.figures %}
+              {% for fig in s.figures %}
+                <figure aria-labelledby="{{ fig.id }}-caption" style="--fig-cols: {{ fig.cols|default(2) }}">
+                  {% if fig.images %}
+                    <div class="fig-grid">
+                      {% for im in fig.images %}
+                        <img src="{{ url_for('static', filename=im.path) }}" alt="{{ im.alt or '' }}" loading="lazy" decoding="async">
+                      {% endfor %}
+                    </div>
+                  {% else %}
+                    <img src="{{ url_for('static', filename=fig.path) }}" alt="{{ fig.alt }}" loading="lazy" decoding="async">
+                  {% endif %}
+                  <figcaption id="{{ fig.id }}-caption">
+                    {{ fig.caption|safe }}{% if fig.credit %} <span class="credit">— {{ fig.credit|safe }}</span>{% endif %}
+                  </figcaption>
+                </figure>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </article>
+      </section>
+    {% endfor %}
+  </main>
+</div>
+
+<script>
+/* Collapsible tables with dynamic height (no clipping) */
+(function () {
+  function setExpandedHeight(inner){
+    inner.style.maxHeight = 'none';
+    const h = inner.scrollHeight + 'px';
+    inner.style.maxHeight = h;
+  }
+  function wrapTable(tbl){
+    const block = document.createElement('div');
+    block.className = 'table-block';
+    const bar = document.createElement('div');
+    bar.className = 'table-block__bar';
+
+    let titleText = 'Table';
+    const cap = tbl.querySelector('caption');
+    if (cap && cap.textContent.trim()) titleText = cap.textContent.trim();
+
+    const title = document.createElement('h3');
+    title.className = 'table-block__title';
+    title.textContent = titleText;
+
+    const btn = document.createElement('button');
+    btn.className = 'table-block__btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-expanded','true');
+    btn.textContent = 'Hide table';
+
+    const inner = document.createElement('div');
+    inner.className = 'table-block__inner';
+
+    const parent = tbl.parentNode;
+    parent.insertBefore(block, tbl);
+    block.appendChild(bar);
+    block.appendChild(inner);
+    bar.appendChild(title);
+    bar.appendChild(btn);
+    inner.appendChild(tbl);
+
+    requestAnimationFrame(() => setExpandedHeight(inner));
+
+    btn.addEventListener('click', function(){
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      if (expanded){
+        this.setAttribute('aria-expanded','false');
+        inner.classList.add('is-collapsed');
+        inner.style.maxHeight = '0px';
+        this.textContent = 'Show table';
+      } else {
+        this.setAttribute('aria-expanded','true');
+        inner.classList.remove('is-collapsed');
+        setExpandedHeight(inner);
+        this.textContent = 'Hide table';
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (btn.getAttribute('aria-expanded') === 'true') setExpandedHeight(inner);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.section-card__body .verbatim table').forEach(wrapTable);
+  });
+})();
+
+/* Robust scroll-spy: activate the section whose top is closest to viewport center */
+(function(){
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const links = Array.from(document.querySelectorAll('.toc-sidebar__link'));
+  const select = document.getElementById('chapterSelect');
+
+  // Map section id -> link
+  const linkById = new Map(links.map(a => {
+    const id = (a.getAttribute('href') || '').replace('#','') || a.dataset.id || '';
+    return [id, a];
+  }));
+
+  function setActive(id){
+    if (!id) return;
+    links.forEach(a => a.classList.remove('is-active'));
+    const link = linkById.get(id);
+    if (link) link.classList.add('is-active');
+
+    if (select) {
+      const value = '#' + id;
+      if (select.value !== value) select.value = value;
+    }
+  }
+
+  // Find the section whose top is closest to the vertical center of viewport
+  function findActiveSection(){
+    const mid = window.innerHeight / 2;
+    let best = null;
+    let bestDist = Infinity;
+
+    for (const s of sections) {
+      const r = s.getBoundingClientRect();
+      // distance from section top to viewport center (smaller is better)
+      const d = Math.abs(r.top - mid);
+      // Favor sections that are at least partially visible, but still pick closest otherwise
+      const visible = r.bottom > 0 && r.top < window.innerHeight;
+      const score = visible ? d * 0.9 : d * 1.1; // small bias toward visible sections
+      if (score < bestDist) { bestDist = score; best = s; }
+    }
+
+    return best ? best.id : (sections[0] && sections[0].id);
+  }
+
+  // Throttle with rAF
+  let ticking = false;
+  function onScroll(){
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        setActive(findActiveSection());
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  // Init
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  document.addEventListener('DOMContentLoaded', onScroll);
+
+  // Mobile dropdown jump
+  if (select) {
+    select.addEventListener('change', (e) => {
+      const el = document.querySelector(e.target.value);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  // If page opens with a hash, scroll to it and sync
+  if (location.hash) {
+    const el = document.querySelector(location.hash);
+    if (el) {
+      el.scrollIntoView();
+      // ensure active state after jump
+      setTimeout(onScroll, 50);
+    }
+  }
+})();</script>
+
+{% endblock %}

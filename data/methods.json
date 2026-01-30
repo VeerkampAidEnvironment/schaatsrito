@@ -1,0 +1,112 @@
+{
+  "title": "Hoe werkt het",
+  "last_updated": "27 October 2025",
+  "intro": "",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Overzicht van de afstanden",
+      "text_html": "Op deze pagina vind je het overzicht van de afstanden. De deadlines voor het invullen van je voorspellingen. Welke voorspelingen je al hebt ingevuld en welke nog niet. Deze pagina kan je ook gebruiken om naar elke afstand te navigeren. \n Bovenaan de pagina vind je het overzicht, hierop kan je alle afstanden vinden. De kleuren geven de status van de afstand aan. Rood=deadline verstreken, Groen=voorspelling ingevuld, Donkerblauw=nog geen voorspelling, Lichtblauw=huidige afstand. \n Daaronder heeft elke afstand zijn eigen kaart, op deze kaart vind je alle informatie over de afstand. Ten eerste de status van de afstand: 1)Afgelopen 2)Bezig 3)Resterende tijd tot deadline. Ook kan je zien of je al wel of nog geen voorspelling hebt ingevuld. De grote knop op de kaart leid je naar de pagina van die afstand waar je of jouw voorspelling kan invullen/aanpassen of het (voorlopige) resultaat kan bekijken.",
+      "figures": [
+        {
+          "id": "overview-overview",
+          "path": "images/methode/overview-overview.png",
+          "alt": "",
+          "caption": "Overzicht boveaan de afstanden-pagina",
+          "credit": ""
+        },
+        {
+          "id": "overview-events",
+          "path": "images/methode/overview-events.png",
+          "alt": "",
+          "caption": "Status van de afstand",
+          "credit": ""
+        }
+      ]
+    },
+    {
+      "id": "detail",
+      "title": "Mijn voorspelling",
+      "text_html": "Elke afstand heeft zijn eigen pagina waar je jouw voorspelling kan invullen of de uitslag kan bekijken. Je vind elke afstand op de overzichtspagina (zie hierboven). Eerst zal elke rijder (van het juist geslacht) die aan de spelen meedoet beschikbaar staan om te selecteren. Zodra de officiële startlijst (via de ISU) beschikbaar is zal dit worden teruggebracht tot enkel de startende rijders. Elke gebruiker kan zelf checken of de officiële startlijst al beschikbaar is via de 'Officiële startlijst laden'-knop. \n Voor elke afstand dien je een eerste, tweede en derde kopman te selecteren. Meer over de puntentelling vind je onder het kopje 'puntentelling'. De eerste kopman is herkenbaar aan de gouden kaart (in het midden) de tweede kopman aan de zilveren kaart (links) en de derde kopman (brons) staat rechts op het podium. Niet tevreden met je keus? Met de <///> knop verwijder je een gekozen rijder. Wil je enkel de volgorde veranderen? Dit kan met de pijltjes of door simpelweg de rijder te slepen naar de gewenste plek. \n Let op je moet je voorspelling opslaan (via de 'Voorspelling indienen'-knop om deze definitief te maken. Zodra je je voorspelling hebt opgeslagen is dat te zien rechtsboven op de pagina. Er staat dan . Heb je je veranderde opstelling nog niet opgeslagen dan verschijnt er een waarschuwing in de podiumkaart <zie figuur>. Zodra de deadline <voeg timer toe aan detail pagina> (de officiële start van de wedstrijd) verstreken is, is het niet meer mogelijk je opstelling aan te passen. Op dit moment verandert deze pagina ook van de voorspellingspagina in de uitslagenpagina. (Zie hieronder)",
+      "figures": [
+        {
+          "id": "afstand-leeg",
+          "path": "images/methode/afstand-leeg.png",
+          "alt": "",
+          "caption": "Afstand waar de startlijst nog niet is geladen. Let op dat je enkel rijders kiest die wel meedoen, OF wacht tot de startlijst wel geladen is.",
+          "credit": ""
+        },
+        {
+          "id": "afstand-voorlopig",
+          "path": "images/methode/afstand-voorlopig.png",
+          "alt": "",
+          "caption": "Voorspelling ingevuld maar nog niet opgeslagen",
+          "credit": ""
+        },
+        {
+          "id": "afstand-aangepast",
+          "path": "images/methode/afstand-aangepast.png",
+          "alt": "",
+          "caption": "Een (oude) opgeslagen voorspelling maar de wijzigingen zijn nog niet opgeslagen",
+          "credit": ""
+        }
+      ]
+    },
+    {
+      "id": "detail2",
+      "title": "De uitslag",
+      "text_html": "De wedstrijd kan via de afstands-pagina live gevolgd worden. Zodra de deadline is verstreken is het mogelijk om live de laatste uitslagen op te halen. Dit is mogelijk met de 'resultaat laden'-knop. Als er een nog niet volledige uitslag word weergegeven is dat rechtsboven te zien. Zodra de uitslag volledig is, is dat te herkennen aan 'Definitief resultaat'. Jouw rijders en hun behaalde score worden op de uitslagenpagina uitgelicht zodat je direct live kan zien hoe ze het doen. Ben je benieuwd hoe je het ten opzicht van de anderen het hebt gedaan? Ga dan naar de <///> pagina. je vind de uitleg bij <///>",
+      "figures": [
+        {
+          "id": "afstand-resultaat",
+          "path": "images/methode/afstand-resultaat.png",
+          "alt": "",
+          "caption": "De uitslag is geladen. De gekozen renners zijn uitgelicht en er word getoond hoeveel punten ze hebben opgeleverd.",
+          "credit": ""
+        }
+      ]
+    },
+    {
+      "id": "puntentelling",
+      "title": "Puntentelling",
+      "text_html": "Bij elke afstand kun je met jouw drie gekozen rijders punten scoren. <li> <strong>Basispunten</strong> - Hoe hoger jouw rijder eindigt, hoe meer punten deze verdient. Hieronder vind je per klassering de basis-score <///>.</li> Mocht u zich nu afvragen wat 'basisscore' betekent, paniekeer dat niet dat word nu allemaal uitgelegd. Naast de directe punten voor de klassering is het namelijk mogelijk jouw rijders nog beter te laten scoren. <li> <strong> Kopmanpunten</strong> - Allereerst door een eerste, tweede en derde rijder te kiezen. De punten van jouw eerste rijder worden namelijk met 2x vermenigvuldigd, de punten van de tweede rijder met 1.5x en de derde rijder verdient zijn basispunten <///>. </li> <li> <strong>Originaliteits-punten</strong> - Dan is er nog een derde manier om te scoren. Hoe minder deelnemers jouw rijder hebben gekozen, hoe meer punten jouw rijder kan halen. Hoe dit werkt zie je hieronder <///></li> Het overzicht van de volledige puntentelling zie je hieronder <///>",
+      "figures": [
+        {
+          "id": "puntentelling",
+          "path": "images/methode/puntentelling.jpeg",
+          "alt": "",
+          "caption": "De puntentelling met links de invloed van de 3 categoriën. Rechts de score voor elk scenario. Voorbeeld, een tweede kopman (x1.5) die door minder dan 25% van de spelers gekozen is(x1.25) en die derde word (55 punten) levert 55*1.5*1.25=103punten op.",
+          "credit": ""
+        }
+      ]
+    },
+    {
+      "id": "leaderboard",
+      "title": "De stand",
+      "text_html": "Dan is er ten slotte nog misschien wel de belangrijkste pagina, de stand. Deze pagina heeft twee weergaves, de 'ranglijst' en de 'scores per afstand'. Je wisselt tussen deze weergaves met de knop boven de stand. De <strong>Ranglijst</strong> laat op een snelle overzichtelijke manier de stand zien, met enkel de totaalscores. Ben je benieuwd hoe jij scoort (ten opzichte van anderen) per afstand en wie welke afstand heeft 'gewonnen'. Ga dan naar de <strong>Scores per afstand</strong>-weergave. Hier vind je voor elke deelnemer elke score voor elke afstand. Door op een score van een afstand te klikken kan je ook meteen jouw selectie en resultaat met het team van deze andere gebruiker vergelijken." ,
+      "figures": [
+        {
+          "id": "stand-ranglijst",
+          "path": "images/methode/stand-ranglijst.png",
+          "alt": "",
+          "caption": "De ranglijst",
+          "credit": ""
+        },
+        {
+          "id": "stand-afstand",
+          "path": "images/methode/stand-afstand.png",
+          "alt": "",
+          "caption": "De scores per afstand, met de winnaar van de afstand uitgelicht. Het kruis betekent dat er (nog) geen voorspelling is ingediend voor die afstand.",
+          "credit": ""
+        },
+        {
+          "id": "stand-detail",
+          "path": "images/methode/stand-detail.png",
+          "alt": "",
+          "caption": "Nadat je op een score in de 'scores per afstand' hebt geklikt kan je jouw voorspelling en score vergelijken met die van die gebruiker.",
+          "credit": ""
+        }
+      ]
+    }
+    ]
+}

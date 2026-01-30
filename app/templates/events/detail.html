@@ -7,13 +7,16 @@
 <h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
   {% if prediction %}
     <div class="prediction-status submitted">
-      ✅ You have submitted a prediction.
+      ✅ je hebt een voorspelling ingediend.
     </div>
   {% else %}
     <div class="prediction-status not-submitted">
-      ⚠️ You have not submitted a prediction yet.
+      ⚠️ Je hebt nog geen voorspelling ingediend.
     </div>
   {% endif %}
+  <span class="countdown-timer timer"
+      data-start="{{ event.start_datetime.timestamp()|float }}"
+      data-now="{{ now.timestamp()|float }}"></span>
 </div>
 {% if not startlist_loaded %}
   <button
@@ -22,7 +25,7 @@
     class="btn-submit"
     style="margin-bottom: 1rem;"
   >
-    Load official startlist
+    Laad officiële startlijst
   </button>
 
   <div id="startlist-status" style="margin-bottom: 1rem;"></div>
@@ -30,20 +33,20 @@
 
 <form method="POST" id="prediction-form">
     <button type="submit" class="btn-submit" id="submit-btn" disabled>
-    Submit Prediction
-  </button>
+      Voorspelling indienen
+    </button>
   <!-- ================= PODIUM ================= -->
   <div class="podium">
     <div class="podium-slot second">
-      <div class="podium-card empty" data-position="2">Select rider</div>
+      <div class="podium-card empty" data-position="2">Selecteer rijder</div>
     </div>
 
     <div class="podium-slot first">
-      <div class="podium-card empty" data-position="1">Select rider</div>
+      <div class="podium-card empty" data-position="1">Selecteer rijder</div>
     </div>
 
     <div class="podium-slot third">
-      <div class="podium-card empty" data-position="3">Select rider</div>
+      <div class="podium-card empty" data-position="3">Selecteer rijder</div>
     </div>
   </div>
 
@@ -66,8 +69,8 @@
       <div class="rider-name">{{ rider.name }}
       <img src="https://live.isuresults.eu/assets/images/flags/{{ rider.country }}.svg" height="10px"></div>
       <div class="rider-buttons">
-        <button type="button" class="select-btn">Select rider</button>
-        <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.id }}')">Profile</button>
+        <button type="button" class="select-btn">Kies rijder</button>
+        <button type="button" class="profile-btn" onclick="openProfileModal('{{ rider.id }}')">Profiel</button>
       </div>
     </div>
     {% endfor %}
@@ -80,9 +83,9 @@
 <h1 class="page-title">{{ event.discipline }} – {{ event.gender }}</h1>
   {% if event.results %}
   {% if event.results_final %}
-  <h2 class="event-status final">Result is final</h2>
+  <h2 class="event-status final">Definitief resultaat</h2>
   {% else %}
-  <h2 class="event-status provisional">Provisional result</h2>
+  <h2 class="event-status provisional">Voorlopig resultaat</h2>
   {% endif %}
   {% endif %}
 </div>
@@ -97,9 +100,9 @@
     style="margin-bottom: 1rem;"
   >
     {% if results %}
-      Update results
+      Resultaten bijwerken
     {% else %}
-      Load official results
+      Resultaat laden
     {% endif %}
 </button>
 {% endif %}
@@ -129,12 +132,31 @@
           <div class="result-time">
             {{ row.end_time }}
           </div>
-
-          {% if row.rider.id in [prediction.rider_1_id, prediction.rider_2_id, prediction.rider_3_id] %}
-            {% set pos = row.position %}
-            {% set points = 3 if pos == 1 else 2 if pos == 2 else 1 if pos == 3 else 0 %}
-            <div class="result-points">{{ points }} pts</div>
+          {% if prediction %}
+            {% if row.rider.id == prediction.rider_1_id %}
+              <div class="result-points">
+                {{ prediction.rider_1_score }}<br>
+                <a>{{ prediction.rider_1_base }}x
+                {{ prediction.rider_1_captain }}x
+                {{ prediction.rider_1_rarity }}</a>
+              </div>
+            {% elif row.rider.id == prediction.rider_2_id %}
+              <div class="result-points">
+                {{ prediction.rider_2_score }}<br>
+                <a>{{ prediction.rider_2_base }}x
+                {{ prediction.rider_2_captain }}x
+                {{ prediction.rider_2_rarity }}</a>
+              </div>
+            {% elif row.rider.id == prediction.rider_3_id %}
+              <div class="result-points">
+                {{ prediction.rider_3_score }}<br>
+                <a>{{ prediction.rider_3_base }}x
+                {{ prediction.rider_3_captain }}x
+                {{ prediction.rider_3_rarity }}</a>
+              </div>
+            {% endif %}
           {% endif %}
+
       </div>
   </div>
   {% endfor %}
@@ -218,6 +240,39 @@
     background-repeat: no-repeat;
     padding: 2rem;               /* optional: give some padding so podium cards aren’t flush to edge */
     border-radius: 16px;         /* optional: match card style */
+}
+.countdown-timer {
+    /* Size & Shape */
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;       /* perfect circle */
+    display: flex;
+    justify-content: center;   /* center content horizontally */
+    align-items: center;       /* center content vertically */
+
+    /* Typography */
+    font-family: 'Montserrat', sans-serif; /* modern, clean font */
+    font-weight: 700;
+    font-size: 2rem;        /* large and readable */
+    color: black;
+    text-align: center;
+
+    /* Background & Border */
+    background: var(--alabaster-grey);
+    border: 8px solid var(--color-1);
+
+    /* Visual Effects */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* subtle depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* Optional padding for future inner content */
+    padding: 10px;
+}
+
+/* Hover animation for subtle interactivity */
+.countdown-timer:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -435,29 +490,32 @@
 /* ===== RESULTS CONTAINER ===== */
 .results-container {
     display: grid;
-    flex-direction: column;
     gap: 1rem;
-    max-width: 800px;
-    margin: 0 auto;
-    grid-template-columns: repeat(2, 1fr);
+    max-width: 1200px;
+    grid-template-columns: repeat(2, 1fr); /* two columns */
+    margin: 0 auto;    /* horizontally center the container */
 }
+
 
 /* ===== RESULT CARD ===== */
 .result-card {
+    min-width:100%;
+    height:100px;
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.75rem 1rem;
-    border-radius: 12px;
+    border-radius: 25px;
     background: var(--alabaster-grey);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 15px solid var(--color-6);
+    border-left: 25px solid var(--color-6);
 }
 
 .result-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    border-left: 25px solid var(--color-1);
 }
 
 /* ===== POSITION ===== */
@@ -475,7 +533,7 @@
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #1e88e5;
+    border: 5px solid var(--color-1);
 }
 
 .photo-placeholder {
@@ -512,17 +570,22 @@
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #1e88e5;
+    color: var(--color-4);
     border: 2px solid #1e88e5;
-    border-radius: 8px;
+    border-radius:30px;
     padding: 0.3rem 0.6rem;
-    background: #e0f7fa;
+    background: var(--alabaster-grey);
     text-align: center;
-    min-width: 70px;
+    width: 90px;
+    height:90px
 }
 
+.result-points a {
+  font-size:0.7rem;
+  color: var(--color-1);
+}
 /* Hide points for non-highlighted riders */
 .result-card:not(.highlight) .result-points {
     display: none;
@@ -538,9 +601,9 @@
 }
 
 /* ===== MEDAL COLORS ===== */
-.result-card.gold { border-left: 15px solid #ffd700; }
-.result-card.silver { border-left: 15px solid #c0c0c0; }
-.result-card.bronze { border-left: 15px solid #cd7f32; }
+.result-card.gold { border-left: 25px solid #ffd700; }
+.result-card.silver { border-left: 25px solid #c0c0c0; }
+.result-card.bronze { border-left: 25px solid #cd7f32; }
 
 /* ===== HIGHLIGHT USER PICK ===== */
 .result-card.highlight {
@@ -799,7 +862,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
         if (riderId !== correctPrediction[pos - 1]) {
           card.classList.add('warning'); // amber border
-          warningHTML = `<div class="warning-text">⚠️ Changed not saved!</div>`;
+          warningHTML = `<div class="warning-text">⚠️ Wijziging niet opgeslagen</div>`;
         } else {
           card.classList.remove('warning');
         }
@@ -820,7 +883,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button type="button" class="profile-btn" onclick="openProfileModal('${riderId}')">Profile</button>
           ${pos < 3 ? `<button type="button" class="arrow-btn down" data-pos="${pos}">⬇</button>` : `<div style="width:26px"></div>`}
         </div>
-        <button type="button" class="remove-btn" data-id="${riderId}" style="margin-top:0.5rem;">✕ Remove</button>
+        <button type="button" class="remove-btn" data-id="${riderId}" style="margin-top:0.5rem;">✕ Verwijder</button>
       `;
     });
 
@@ -974,14 +1037,14 @@ if (loadBtn) {
     const statusEl = document.getElementById("startlist-status");
 
     if (data.status === "loaded") {
-      statusEl.textContent = "✅ Startlist loaded. Reloading…";
+      statusEl.textContent = "✅ Startlijst geladen. Reloading…";
       setTimeout(() => location.reload(), 1000);
     } else if (data.status === "not_available") {
-      statusEl.textContent = "⚠️ Startlist not yet available.";
+      statusEl.textContent = "⚠️ Startlijst nog niet beschikbaar.";
       loadBtn.disabled = false;
       loadBtn.textContent = "Load official startlist";
     } else if (data.status === "already_loaded") {
-      statusEl.textContent = "ℹ️ Startlist already loaded.";
+      statusEl.textContent = "ℹ️ Startlijst al geladen.";
     }
   });
 }
@@ -1004,27 +1067,27 @@ if (loadResultsBtn) {
 
     if (data.status === "loaded_final") {
       // Final results, hide button
-      statusEl.textContent = "✅ Final results loaded.";
+      statusEl.textContent = "✅ Definitieve resultaat geladen.";
       loadResultsBtn.style.display = "none";
       setTimeout(() => location.reload(), 1000);
     } else if (data.status === "loaded_partial") {
       // Partial results, update button text
       statusEl.textContent = "⚠️ Results are not final yet.";
       loadResultsBtn.disabled = false;
-      loadResultsBtn.textContent = "Update results";
+      loadResultsBtn.textContent = "Resultaten bijwerken";
       setTimeout(() => location.reload(), 1000);
     } else if (data.status === "not_available") {
-      statusEl.textContent = "⚠️ Results not yet available.";
+      statusEl.textContent = "⚠️ Resultaten nog niet beschikbaar.";
       loadResultsBtn.disabled = false;
-      loadResultsBtn.textContent = "Load official results";
+      loadResultsBtn.textContent = "Officieel resultaat laden";
     } else if (data.status === "already_loaded") {
       if (data.final) {
-        statusEl.textContent = "✅ Final results already loaded.";
+        statusEl.textContent = "✅ Resultaat al geladen.";
         loadResultsBtn.style.display = "none";
       } else {
         statusEl.textContent = "⚠️ Partial results already loaded.";
         loadResultsBtn.disabled = false;
-        loadResultsBtn.textContent = "Update results";
+        loadResultsBtn.textContent = "Resultaten bijwerken";
       }
     }
   });
@@ -1057,7 +1120,7 @@ function highlightPredictionMismatch() {
         if (!card.querySelector('.warning-text')) {
           const warningDiv = document.createElement('div');
           warningDiv.className = 'warning-text';
-          warningDiv.textContent = "⚠️ Changed from your prediction";
+          warningDiv.textContent = "⚠️ Afwijking van je voorspelling";
           card.appendChild(warningDiv);
         }
       } else {
@@ -1070,7 +1133,47 @@ function highlightPredictionMismatch() {
   {% endif %}
 }
 </script>
+Timer Script -->
+<script>
+function initTimers() {
+    const timers = document.querySelectorAll('.timer');
 
+    timers.forEach(timerEl => {
+        const startTime = new Date(parseFloat(timerEl.dataset.start) * 1000);
+        let currentTime = new Date(parseFloat(timerEl.dataset.now) * 1000);
+
+        function updateTimer() {
+            let diff = startTime - currentTime;
+
+            if (diff <= 0) {
+                timerEl.textContent = "Evenement gestart!";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            diff -= days * 1000 * 60 * 60 * 24;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            diff -= hours * 1000 * 60 * 60;
+            const minutes = Math.floor(diff / (1000 * 60));
+            diff -= minutes * 1000 * 60;
+            const seconds = Math.floor(diff / 1000);
+
+            timerEl.textContent =
+                (days > 0 ? days + "d " : "") +
+                (hours < 10 ? "0" : "") + hours + "u " +
+                (minutes < 10 ? "0" : "") + minutes + "m " +
+                (seconds < 10 ? "0" : "") + seconds + "s";
+
+            currentTime = new Date(currentTime.getTime() + 1000);
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", initTimers);
+</script>
 
 <!-- ================= PROFILE MODAL ================= -->
 <div id="profile-modal" class="modal">

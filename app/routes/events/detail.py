@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 def event_detail(event_id):
     event = Event.query.get_or_404(event_id)
     now_utc = datetime.utcnow()
-    now = now_utc + timedelta(hours=1)
+    now = now_utc + timedelta(hours=-359)
 
     prediction = Prediction.query.filter_by(user_id=current_user.id, event_id=event.id).first()
 
@@ -57,25 +57,53 @@ def event_detail(event_id):
             startlist=startlist,
             prediction=prediction,
             future=True,
-            startlist_loaded=startlist_loaded
+            startlist_loaded=startlist_loaded,
+            now=now
         )
 
-    # PAST EVENT: show results
+    # PAST EVENT: show results + scores
     else:
         results_entries = event.results
         results = sorted(results_entries, key=lambda r: r.position)
         results_loaded = bool(results_entries)
 
         user_rider_ids = []
+        prediction_data = None
         if prediction:
             user_rider_ids = [prediction.rider_1_id, prediction.rider_2_id, prediction.rider_3_id]
+
+            # Only include score info if event is past
+            prediction_data = {
+                "rider_1_id": prediction.rider_1_id,
+                "rider_2_id": prediction.rider_2_id,
+                "rider_3_id": prediction.rider_3_id,
+
+                # subscores
+                "rider_1_base": prediction.rider_1_base,
+                "rider_1_captain": prediction.rider_1_captain,
+                "rider_1_rarity": prediction.rider_1_rarity,
+                "rider_1_score": prediction.rider_1_score,
+
+                "rider_2_base": prediction.rider_2_base,
+                "rider_2_captain": prediction.rider_2_captain,
+                "rider_2_rarity": prediction.rider_2_rarity,
+                "rider_2_score": prediction.rider_2_score,
+
+                "rider_3_base": prediction.rider_3_base,
+                "rider_3_captain": prediction.rider_3_captain,
+                "rider_3_rarity": prediction.rider_3_rarity,
+                "rider_3_score": prediction.rider_3_score,
+
+                # total score
+                "score": prediction.score
+            }
 
         return render_template(
             "events/detail.html",
             event=event,
             results=results,
             user_rider_ids=user_rider_ids,
-            prediction=prediction,
+            prediction=prediction_data,
             future=False,
             results_loaded=results_loaded
         )
