@@ -327,6 +327,143 @@ document.addEventListener("DOMContentLoaded", () => {
 
 }
 
+@media (max-width: 768px) {
+
+    /* Timeline container */
+    .timeline {
+        width: 100%;
+        padding: 20px 12px;
+    }
+
+    /* Remove center line */
+    .timeline::before {
+        display: none;
+    }
+
+    /* Full-width items */
+    .timeline-item {
+        width: 100%;
+        padding: 10px 0;
+        left: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Disable stagger offsets */
+    .timeline-item.right:nth-of-type(2n),
+    .timeline-item.left:nth-of-type(2n+1) {
+        margin-top: 0;
+    }
+
+    /* Timeline cards */
+    .timeline-content {
+        padding: 16px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .timeline-date {
+        position: relative;
+        top: auto;
+        left: auto !important;
+        right: auto !important;
+
+        margin: 8px auto 0;
+        width: auto;
+        height: auto;
+        border-radius: 999px;
+        padding: 6px 12px;
+
+        font-size: 0.75rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .card-header {
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        text-align: center;
+    }
+
+    .event-name {
+        font-size: 1.4rem;
+        max-width: 100%;
+        white-space: normal;
+    }
+
+    .event-gender {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+}
+@media (max-width: 768px) {
+
+    .card-status-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .countdown-timer {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+        border-radius: 999px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .event-nav-wrapper {
+        padding: 10px 0;
+    }
+
+    .event-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 8px 10px;
+        gap: 8px;
+        scrollbar-width: none;
+    }
+
+    .event-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .event-nav a {
+        flex: 0 0 auto;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+
+    .gender-title {
+        font-size: 1rem;
+        margin: 6px 0;
+        border-width: 3px;
+    }
+}
+.timeline-item {
+    scroll-margin-top: 140px;
+}
+
+@media (max-width: 768px) {
+    .timeline-item {
+        scroll-margin-top: 180px;
+    }
+}
+
 </style>
 
 {% endblock %}
