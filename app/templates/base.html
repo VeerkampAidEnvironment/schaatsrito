@@ -73,12 +73,16 @@ body {
 .navbar .nav-buttons a {
   position: relative;
   z-index: 1;
-  width:25%;
 }
 
 
+.btn-nav-small { width: 10%; }
+.btn-nav-medium { width: 20%; }
+.btn-nav-large { width: 30%; }
+
 .navbar .nav-buttons {
   display: flex;
+  gap: 0.5rem;
 }
 
 .navbar .nav-buttons a {
@@ -137,10 +141,11 @@ body {
 {% if not hide_navbar %}
 <nav class="navbar">
   <div class="nav-buttons">
-    <a href="{{ url_for('events.methods_page') }}">Hoe werkt het</a>
-    <a href="{{ url_for('events.events_overview') }}">Afstanden</a>
-    <a href="{{ url_for('leaderboard.leaderboard') }}">Ranglijst</a>
-    <a href="{{ url_for('auth.login_register') }}">Uitloggen</a>
+    <a href="{{ url_for('events.methods_page') }}"class="btn-nav-medium">Hoe werkt het</a>
+    <a href="{{ url_for('events.events_overview') }}"class="btn-nav-large">Afstanden</a>
+    <a href="{{ url_for('leaderboard.leaderboard') }}"class="btn-nav-large">Ranglijst</a>
+    <a href="{{ url_for('auth.login_register') }}"class="btn-nav-small">Uitloggen</a>
+    <a href="{{ url_for('events.change_username') }}"class="btn-nav-small">Account</a>
   </div>
 </nav>
 {% endif %}
