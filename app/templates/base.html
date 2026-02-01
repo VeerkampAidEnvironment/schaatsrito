@@ -86,6 +86,10 @@ body {
 }
 
 .navbar .nav-buttons a {
+  flex: 0 0 auto;       /* don’t stretch, use width as needed */
+  text-align: center;   /* center text */
+  white-space: normal;  /* allow text to wrap to next line */
+  word-break: break-word; /* break long words if necessary */
   text-decoration: none;
   padding: 0.5rem 1rem;
   border-radius: 10px;
@@ -98,6 +102,22 @@ body {
 .navbar .nav-buttons a:hover {
   background-color: var(--color-2);
   color: var(--color-1);
+}
+
+
+/* Mobile: all buttons same width */
+@media (max-width: 600px) {
+    .navbar .nav-buttons {
+        flex-wrap: wrap; /* wrap buttons to next line if needed */
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .navbar .nav-buttons a {
+        flex: 1 1 45%;   /* each button takes ~45% of row */
+        max-width: 45%;
+        text-align: center;
+    }
 }
 
 /* ================= CONTENT ================= */
