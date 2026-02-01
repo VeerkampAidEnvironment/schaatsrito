@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy.dialects.postgresql import JSON
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
@@ -32,11 +33,23 @@ class Event(db.Model):
     discipline = db.Column(db.String(64))
     start_datetime = db.Column(db.DateTime, default=datetime.utcnow)
     gender = db.Column(db.String(16))
+    startlist_provisional = db.relationship("EventStartlistProvisional", backref="event", lazy=True)
     startlist = db.relationship("EventStartlist", backref="event", lazy=True)
     results = db.relationship("EventResult", backref="event", lazy=True)
     predictions = db.relationship("Prediction", backref="event", lazy=True)
     results_final = db.Column(db.Boolean, default=False)
 
+class EventStartlistProvisional(db.Model):
+    __tablename__ = "event_startlist_provisional"
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey("event.id"), nullable=False)
+    rider_id = db.Column(db.Integer, db.ForeignKey("rider.id"), nullable=False)
+
+    rider = db.relationship(
+        "Rider",
+        backref=db.backref("event_entries_provisional", lazy=True)
+    )
 
 class EventStartlist(db.Model):
     __tablename__ = "event_startlist"
