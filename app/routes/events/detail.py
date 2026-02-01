@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from app.models import Event, Prediction, Rider
+from app.models import Event, Prediction, Rider, EventStartlistProvisional
 from app import db
 from . import events_bp
 from datetime import datetime, timedelta
@@ -19,10 +19,13 @@ def event_detail(event_id):
     if event.start_datetime > now:
         startlist_entries = event.startlist
         if startlist_entries:
+            # Official startlist exists
             startlist = [entry.rider for entry in startlist_entries]
             startlist_loaded = True
         else:
-            startlist = Rider.query.filter_by(gender=event.gender).order_by(Rider.name).all()
+            # Fall back to provisional startlist for this event
+            provisional_entries = EventStartlistProvisional.query.filter_by(event_id=event.id).all()
+            startlist = [entry.rider for entry in provisional_entries]
             startlist_loaded = False
 
         if request.method == "POST":

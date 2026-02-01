@@ -37,6 +37,10 @@ def create_app():
 
     from scripts.seed_riders import seed_riders_command
     app.cli.add_command(seed_riders_command)
+    # Register Olympic startlists command
+    from scripts.import_olympic_startlists import import_olympic_startlists_command
+    app.cli.add_command(import_olympic_startlists_command)
+
     from app.routes import blueprints
 
     def create_app():
@@ -61,6 +65,10 @@ def create_app():
 
         from scripts.seed_riders import seed_riders_command
         app.cli.add_command(seed_riders_command)
+
+        # Register Olympic startlists command
+        from scripts.import_olympic_startlists import import_olympic_startlists_command
+        app.cli.add_command(import_olympic_startlists_command)
 
         return app
 
