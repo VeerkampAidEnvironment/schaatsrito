@@ -385,7 +385,6 @@ body::before {
     text-align: center;
     z-index: 100;
     margin-right: 50px;
-    border: 5px solid var(--alabaster-grey);
 
 }
 
@@ -540,7 +539,6 @@ body::before {
     .gender-title {
         font-size: 1rem;
         margin: 6px 0;
-        border-width: 3px;
     }
 }
 .timeline-item {

@@ -23,11 +23,61 @@
     </div>
 
     <!-- ================= RANKING VIEW ================= -->
+    <!-- ================= RANKING VIEW ================= -->
     <div id="rankingView">
+
+        <!-- ===== PODIUM (TOP 3) ===== -->
+<div class="podium-wrapper">
+    {% set first = user_scores[0] %}
+    {% set second = user_scores[1] %}
+    {% set third = user_scores[2] %}
+
+    <div class="podium-spotlight"></div>
+
+    <div class="podium podium-animate">
+
+        <!-- 🥈 SECOND -->
+        <div class="podium-spot second">
+            <div class="podium-block">
+            <div class="podium-card">
+                <div class="podium-name">{{ second.username }}</div>
+                <div class="podium-score">{{ second.total_score }} pts</div>
+            </div>
+            <div class="medal silver">🥈</div>
+            </div>
+        </div>
+
+        <!-- 🥇 FIRST -->
+        <div class="podium-spot first">
+            <div class="podium-block">
+            <div class="podium-card winner">
+                <div class="podium-name">{{ first.username }}</div>
+                <div class="podium-score">{{ first.total_score }} pts</div>
+            </div>
+            <div class="medal gold">🥇</div>
+            </div>
+        </div>
+
+        <!-- 🥉 THIRD -->
+        <div class="podium-spot third">
+            <div class="podium-block">
+            <div class="podium-card">
+                <div class="podium-name">{{ third.username }}</div>
+                <div class="podium-score">{{ third.total_score }} pts</div>
+            </div>
+            <div class="medal bronze">🥉</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+        <!-- ===== REGULAR RANKING (4+) ===== -->
         <div class="ranking-container">
-            {% for user in user_scores %}
-            <div class="ranking-card rank-{{ loop.index }}">
-                <div class="rank-position">{{ loop.index }}</div>
+            {% for user in user_scores[3:] %}
+            <div class="ranking-card rank-{{ loop.index + 3 }}">
+                <div class="rank-position">{{ loop.index + 3 }}</div>
 
                 <div class="rank-info">
                     <div class="rank-name">{{ user.username }}</div>
@@ -36,7 +86,9 @@
             </div>
             {% endfor %}
         </div>
+
     </div>
+
 
     <!-- ================= FULL SCORE TABLE ================= -->
     <div id="tableView" style="display:none">
@@ -142,6 +194,7 @@
         gap: 1rem;
     }
 
+
     .ranking-card {
         display: flex;
         align-items: center;       /* vertically center */
@@ -153,7 +206,6 @@
         border: 5px solid var(--bright-fern);
         gap: 1rem;                 /* optional spacing between items */
     }
-
 
     .ranking-card:hover {
         transform: translateY(-2px);
@@ -539,6 +591,201 @@
         mix-blend-mode: soft-light;
         opacity: 0.25;
     }
+    @media (max-width: 600px) {
+        .rank-name {
+            font-size:0.9rem;
+            }
+        .rank-score {
+            font-size:1.5rem;
+            }
+        }
+
+/* ================= PODIUM ================= */
+
+.podium-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4rem;
+    padding-top: 3rem;
+}
+
+/* Spotlight */
+.podium-spotlight {
+    position: absolute;
+    width: 520px;
+    height: 220px;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255,255,255,0.18),
+        transparent 70%
+    );
+    top: 0;
+    z-index: 0;
+    filter: blur(12px);
+}
+
+.podium {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5rem;
+    z-index: 1;
+}
+
+.podium-spot {
+    width: 300px;
+    text-align: center;
+    position: relative;
+}
+
+/* ================= MEDALS ================= */
+
+.medal {
+    font-size: 4rem;
+    position: absolute;
+    bottom:-40px;
+    left: 50%;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+}
+
+.medal.gold {
+    text-shadow: 0 0 18px rgba(255,215,0,0.9);
+}
+
+.medal.silver {
+    text-shadow: 0 0 14px rgba(220,220,220,0.8);
+}
+
+.medal.bronze {
+    text-shadow: 0 0 14px rgba(205,127,50,0.8);
+}
+
+/* ================= GLASS NAME CARD ================= */
+
+.podium-card {
+    background: color-mix(
+        in srgb,
+        var(--alabaster-grey) 20%,
+        transparent
+    );
+    backdrop-filter: blur(1px);
+    border-radius: 16px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.4),
+        0 6px 16px rgba(0,0,0,0.25);
+    align:center;
+}
+
+/* Winner gets subtle accent, not gold text */
+.podium-card.winner {
+    box-shadow:
+        0 0 22px rgba(255,215,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.45);
+}
+
+/* Text uses ROOT COLORS */
+.podium-name {
+    font-weight: 1000;
+    font-size: 1.6rem;
+    color: var(--color-1);
+}
+
+.podium-score {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-3);
+}
+
+/* ================= PODIUM BLOCKS ================= */
+
+.podium-block {
+    width: 100%;
+    border-radius: 22px 22px 0 0;
+    box-shadow:
+        inset 0 3px 0 rgba(255,255,255,0.35),
+        0 14px 30px rgba(0,0,0,0.35);
+}
+
+/* 🥇 GOLD */
+.first .podium-block {
+    height: 200px;
+    background: linear-gradient(
+        180deg,
+        #FFD700,
+        #C9A000
+    );
+}
+
+/* 🥈 SILVER */
+.second .podium-block {
+    height: 175px;
+    background: linear-gradient(
+        180deg,
+        #E0E0E0,
+        #A8A8A8
+    );
+}
+
+/* 🥉 BRONZE */
+.third .podium-block {
+    height: 150px;
+    background: linear-gradient(
+        180deg,
+        #CD7F32,
+        #9E5C26
+    );
+}
+
+/* Lift the winner */
+.podium-spot.first {
+    transform: translateY(-26px);
+}
+
+/* ================= ENTRANCE ANIMATION ================= */
+
+.podium-animate .podium-spot {
+    animation: podiumRise 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.podium-animate .first { animation-delay: 0.1s; }
+.podium-animate .second { animation-delay: 0.25s; }
+.podium-animate .third { animation-delay: 0.4s; }
+
+@keyframes podiumRise {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 650px) {
+    .podium {
+        gap: 1.2rem;
+    }
+
+    .podium-spot {
+        width: 120px;
+    }
+
+    .podium-name {
+        font-size: 0.9rem;
+    }
+
+    .podium-score {
+        font-size: 0.8rem;
+    }
+}
 
     </style>
 
