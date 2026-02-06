@@ -41,6 +41,9 @@ def create_app():
     from scripts.import_olympic_startlists import import_olympic_startlists_command
     app.cli.add_command(import_olympic_startlists_command)
 
+    from scripts.change_event_id import change_event_id
+    app.cli.add_command(change_event_id)
+
     from app.routes import blueprints
 
     def create_app():
@@ -69,6 +72,9 @@ def create_app():
         # Register Olympic startlists command
         from scripts.import_olympic_startlists import import_olympic_startlists_command
         app.cli.add_command(import_olympic_startlists_command)
+
+        from scripts.change_event_id import change_event_id
+        app.cli.add_command(change_event_id)
 
         return app
 
