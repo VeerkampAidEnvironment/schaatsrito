@@ -44,6 +44,9 @@ def create_app():
     from scripts.change_event_id import change_event_id
     app.cli.add_command(change_event_id)
 
+    from scripts.reset_password import reset_password
+    app.cli.add_command(reset_password)
+
     from app.routes import blueprints
 
     def create_app():
@@ -75,6 +78,9 @@ def create_app():
 
         from scripts.change_event_id import change_event_id
         app.cli.add_command(change_event_id)
+
+        from scripts.reset_password import reset_password
+        app.cli.add_command(reset_password)
 
         return app
 
