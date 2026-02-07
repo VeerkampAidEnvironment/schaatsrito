@@ -21,6 +21,25 @@ def event_detail(event_id):
         if startlist_entries:
             # Official startlist exists
             startlist = [entry.rider for entry in startlist_entries]
+
+            # 👇 ensure predicted riders are always present
+            if prediction:
+                predicted_ids = {
+                    prediction.rider_1_id,
+                    prediction.rider_2_id,
+                    prediction.rider_3_id,
+                }
+
+                predicted_riders = (
+                    Rider.query
+                    .filter(Rider.id.in_(predicted_ids))
+                    .all()
+                )
+
+                # add missing predicted riders
+                for rider in predicted_riders:
+                    if rider not in startlist:
+                        startlist.append(rider)
             startlist_loaded = True
         else:
             # Fall back to provisional startlist for this event

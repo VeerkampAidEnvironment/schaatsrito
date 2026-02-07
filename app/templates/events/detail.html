@@ -30,6 +30,9 @@
 
   <div id="startlist-status" style="margin-bottom: 1rem;"></div>
 {% endif %}
+<div class="prediction-status not-submitted">
+⚠️ Eén of meer rijders staan niet op de officiële startlijst
+</div>
 
 <form method="POST" id="prediction-form">
     <button type="submit" class="btn-submit" id="submit-btn" disabled>
@@ -58,8 +61,19 @@
   <!-- ================= RIDER GRID ================= -->
   <div class="rider-grid">
     {% for rider in startlist %}
-    <div class="rider-card" data-id="{{ rider.id }}" data-name="{{ rider.name }}">
-      <div class="rider-photo">
+    <div class="rider-card
+         {% if prediction and rider.id in [
+           prediction.rider_1_id,
+           prediction.rider_2_id,
+           prediction.rider_3_id
+         ] and rider not in event.startlist|map(attribute='rider') %}
+           removed
+         {% endif %}
+    "
+    data-id="{{ rider.id }}"
+    data-name="{{ rider.name }}"
+    >
+  <div class="rider-photo">
         {% if rider.photo %}
           <img src="{{ rider.photo }}" alt="{{ rider.name }}">
         {% else %}
@@ -848,6 +862,22 @@ h2.event-status.provisional {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.rider-card.removed {
+  opacity: 0.5;
+  border: 2px dashed #f57c00;
+  position: relative;
+}
+
+.rider-card.removed::after {
+  content: "Niet op officiële startlijst";
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #e65100;
+}
 
 </style>
 <style>
@@ -866,6 +896,25 @@ h2.event-status.provisional {
   margin-top: 0.5rem;
   text-align: center;
 }
+
+
+/* Strong podium warning for removed riders */
+.podium-card.removed-warning {
+  border: 3px solid #f57c00;
+  background: linear-gradient(135deg, #fff3e0, #ffffff);
+}
+
+.podium-card .removed-warning-text {
+  margin-top: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #e65100;
+  background: #fff8e1;
+  border-radius: 6px;
+  text-align: center;
+}
+
 .result-card {
     min-width:100%;
     /* keep other existing styles */
@@ -949,26 +998,35 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       const riderCard = document.querySelector(`.rider-card[data-id="${riderId}"]`);
-      if (!riderCard) return;
+      if (!riderCard) {
+        card.innerHTML = `
+          <strong>Rijder niet meer op startlijst</strong>
+          <div class="warning-text">⚠️ Verwijderd uit officiële startlijst</div>
+          <button type="button" class="remove-btn" data-id="${riderId}">
+            ✕ Verwijder
+          </button>
+        `;
+        card.classList.add('warning');
+        return;
+      }
 
+      // 👇 ADD THIS BLOCK
+      const isRemoved = riderCard.classList.contains("removed");
       const imgSrc = riderCard.querySelector('img') ? riderCard.querySelector('img').src : '';
 
-      // --- NEW WARNING LOGIC ---
-      let warningHTML = '';
-      {% if prediction %}
-        const correctPrediction = [
-          "{{ prediction.rider_1_id }}",
-          "{{ prediction.rider_2_id }}",
-          "{{ prediction.rider_3_id }}"
-        ];
-        if (riderId !== correctPrediction[pos - 1]) {
-          card.classList.add('warning'); // amber border
-          warningHTML = `<div class="warning-text">⚠️ Wijziging niet opgeslagen</div>`;
-        } else {
-          card.classList.remove('warning');
-        }
-      {% endif %}
-      // ------------------------
+      // --- REMOVED RIDER WARNING ---
+let warningHTML = '';
+
+if (isRemoved) {
+  card.classList.add('removed-warning');
+
+  warningHTML = `
+    <div class="removed-warning-text">
+      ⚠️ Niet op officiële startlijst<br>
+      Verwijder deze rijder
+    </div>
+  `;
+}
 
       card.classList.add({1:'gold',2:'silver',3:'bronze'}[pos]);
       card.setAttribute('draggable','true');
@@ -1294,6 +1352,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+const hasRemoved = selected.some(id => {
+  const card = document.querySelector(`.rider-card[data-id="${id}"]`);
+  return card?.classList.contains("removed");
+});
+
+submitBtn.disabled = hasRemoved || selected.length !== 3;
+
 
 </script>
 
