@@ -1033,7 +1033,16 @@ if (isRemoved) {
     </div>
   `;
 }
+// Prediction mismatch (only if prediction exists)
+if (hasPredictionMismatch(pos, riderId)) {
+  card.classList.add('warning');
 
+  warningHTML += `
+    <div class="warning-text">
+      ⚠️ Afwijking van je voorspelling
+    </div>
+  `;
+}
       card.classList.add({1:'gold',2:'silver',3:'bronze'}[pos]);
       card.setAttribute('draggable','true');
       card.dataset.riderId = riderId;
@@ -1260,43 +1269,19 @@ if (loadResultsBtn) {
 </script>
 
 <script>
-function highlightPredictionMismatch() {
+function hasPredictionMismatch(pos, riderId) {
   {% if prediction %}
     const correctPrediction = [
       "{{ prediction.rider_1_id }}",
       "{{ prediction.rider_2_id }}",
       "{{ prediction.rider_3_id }}"
     ];
-
-    [1,2,3].forEach(pos => {
-      const card = document.querySelector(`.podium-card[data-position="${pos}"]`);
-      const currentRider = selected[pos - 1];
-
-      if (!card || !currentRider) return;
-
-      // Remove previous warning class
-      card.classList.remove('warning');
-
-      // If the current rider is not the correct one for this position
-      if (currentRider !== correctPrediction[pos - 1]) {
-        card.classList.add('warning');
-
-        // Add warning text
-        if (!card.querySelector('.warning-text')) {
-          const warningDiv = document.createElement('div');
-          warningDiv.className = 'warning-text';
-          warningDiv.textContent = "⚠️ Afwijking van je voorspelling";
-          card.appendChild(warningDiv);
-        }
-      } else {
-        card.classList.remove('warning');
-        const existing = card.querySelector('.warning-text');
-        if (existing) existing.remove();
-      }
-
-    });
+    return riderId !== correctPrediction[pos - 1];
+  {% else %}
+    return false;
   {% endif %}
 }
+
 </script>
 <script>
 function initTimers() {
