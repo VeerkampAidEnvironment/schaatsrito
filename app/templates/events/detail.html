@@ -30,9 +30,11 @@
 
   <div id="startlist-status" style="margin-bottom: 1rem;"></div>
 {% endif %}
-<div class="prediction-status not-submitted">
-⚠️ Eén of meer rijders staan niet op de officiële startlijst
+{% if startlist_loaded %}
+<div class="prediction-status not-submitted" id="startlist-warning" style="display:none;">
+  ⚠️ Eén of meer rijders staan niet op de officiële startlijst
 </div>
+{% endif %}
 
 <form method="POST" id="prediction-form">
     <button type="submit" class="btn-submit" id="submit-btn" disabled>
@@ -62,13 +64,17 @@
   <div class="rider-grid">
     {% for rider in startlist %}
     <div class="rider-card
-         {% if prediction and rider.id in [
+      {% if startlist_loaded
+         and prediction
+         and rider.id in [
            prediction.rider_1_id,
            prediction.rider_2_id,
            prediction.rider_3_id
-         ] and rider not in event.startlist|map(attribute='rider') %}
-           removed
-         {% endif %}
+         ]
+         and rider not in event.startlist|map(attribute='rider')
+      %}
+        removed
+      {% endif %}
     "
     data-id="{{ rider.id }}"
     data-name="{{ rider.name }}"
