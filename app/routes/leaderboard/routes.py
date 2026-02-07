@@ -4,13 +4,14 @@ from app.models import User, Event, Prediction, EventResult
 from app import db
 from sqlalchemy import func
 from . import leaderboard_bp
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @leaderboard_bp.route("/leaderboard")
 @login_required
 def leaderboard():
-    now = datetime.utcnow()
+    now_utc = datetime.utcnow()
+    now = now_utc + timedelta(hours=1)
 
     # Get user scores
     user_scores = (
