@@ -4,6 +4,7 @@ from app.models import Event, Prediction, Rider, EventStartlistProvisional
 from app import db
 from . import events_bp
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 
 @events_bp.route("/events/<int:event_id>", methods=["GET", "POST"])
@@ -119,6 +120,42 @@ def event_detail(event_id):
                 # total score
                 "score": prediction.score
             }
+            # --- Prediction overview aggregation ---
+            predictions = Prediction.query.filter_by(event_id=event.id).all()
+
+            overview = defaultdict(lambda: {
+                "rider": None,
+                "pos1": 0,
+                "pos2": 0,
+                "pos3": 0,
+                "total": 0
+            })
+
+            for p in predictions:
+                for pos, rider_id in enumerate(
+                        [p.rider_1_id, p.rider_2_id, p.rider_3_id], start=1
+                ):
+                    if not rider_id:
+                        continue
+
+                    rider = Rider.query.get(rider_id)
+                    entry = overview[rider_id]
+                    entry["rider"] = rider
+
+                    if pos == 1:
+                        entry["pos1"] += 1
+                    elif pos == 2:
+                        entry["pos2"] += 1
+                    elif pos == 3:
+                        entry["pos3"] += 1
+
+                    entry["total"] += 1
+
+            prediction_overview = sorted(
+                overview.values(),
+                key=lambda x: x["total"],
+                reverse=True
+            )
 
         return render_template(
             "events/detail.html",
@@ -127,5 +164,7 @@ def event_detail(event_id):
             user_rider_ids=user_rider_ids,
             prediction=prediction_data,
             future=False,
-            results_loaded=results_loaded
+            results_loaded=results_loaded,
+            prediction_overview=prediction_overview
+
         )

@@ -204,6 +204,36 @@
   </div>
   {% endfor %}
 </div>
+{% if prediction_overview %}
+<h2 style="margin-top:2rem;">📊 Voorspellingen – overzicht</h2>
+
+<table class="prediction-overview">
+  <thead>
+    <tr>
+      <th>Rijder</th>
+      <th>🥇 1e</th>
+      <th>🥈 2e</th>
+      <th>🥉 3e</th>
+      <th>Totaal</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in prediction_overview %}
+    <tr>
+      <td>
+        {{ row.rider.name }}
+        <img src="https://live.isuresults.eu/assets/images/flags/{{ row.rider.country }}.svg" height="10px">
+      </td>
+      <td>{{ row.pos1 }}</td>
+      <td>{{ row.pos2 }}</td>
+      <td>{{ row.pos3 }}</td>
+      <td><strong>{{ row.total }}</strong></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
 {% endif %}
 
 
@@ -959,6 +989,38 @@ h2.event-status.provisional {
     margin-top: 0.5rem;
 }
 
+.prediction-overview {
+  width: 100%;
+  max-width: 900px;
+  margin: 1rem auto 3rem;
+  border-collapse: collapse;
+  background: var(--alabaster-grey);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.prediction-overview th,
+.prediction-overview td {
+  padding: 0.6rem 0.8rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.prediction-overview th {
+  background: var(--color-2);
+  color: white;
+  font-weight: 700;
+}
+
+.prediction-overview tbody tr:hover {
+  background: var(--powder-blue);
+}
+
+.prediction-overview td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
 
 </style>
 
