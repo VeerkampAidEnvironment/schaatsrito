@@ -56,6 +56,9 @@ def create_app():
     from scripts.add_provisional_bulk import add_provisional_bulk
     app.cli.add_command(add_provisional_bulk)
 
+    from scripts.manage_startlist import manage_startlist
+    app.cli.add_command(manage_startlist)
+
     from app.routes import blueprints
 
     return app
