@@ -50,6 +50,12 @@ def create_app():
     from scripts.change_start_time import change_start_time
     app.cli.add_command(change_start_time)
 
+    from scripts.add_team import add_team
+    app.cli.add_command(add_team)
+
+    from scripts.add_provisional_bulk import add_provisional_bulk
+    app.cli.add_command(add_provisional_bulk)
+
     from app.routes import blueprints
 
     return app
