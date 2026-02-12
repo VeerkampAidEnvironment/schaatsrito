@@ -47,41 +47,9 @@ def create_app():
     from scripts.reset_password import reset_password
     app.cli.add_command(reset_password)
 
+    from scripts.change_start_time import change_start_time
+    app.cli.add_command(change_start_time)
+
     from app.routes import blueprints
-
-    def create_app():
-        app = Flask(__name__)
-        app.config.from_object(Config)
-
-        # Import models
-        from app import models
-
-        # Initialize extensions
-        db.init_app(app)
-        login_manager.init_app(app)
-        Migrate(app, db)
-
-        # Register all blueprints
-        for bp in blueprints:
-            app.register_blueprint(bp)
-
-        # Add CLI commands
-        from scripts.seed_events import seed_events
-        app.cli.add_command(seed_events)
-
-        from scripts.seed_riders import seed_riders_command
-        app.cli.add_command(seed_riders_command)
-
-        # Register Olympic startlists command
-        from scripts.import_olympic_startlists import import_olympic_startlists_command
-        app.cli.add_command(import_olympic_startlists_command)
-
-        from scripts.change_event_id import change_event_id
-        app.cli.add_command(change_event_id)
-
-        from scripts.reset_password import reset_password
-        app.cli.add_command(reset_password)
-
-        return app
 
     return app
