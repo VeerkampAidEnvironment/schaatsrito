@@ -62,6 +62,9 @@ def create_app():
     from scripts.change_rider_id import change_rider_id
     app.cli.add_command(change_rider_id)
 
+    from scripts.reassign_rider import reassign_rider
+    app.cli.add_command(reassign_rider)
+
     from app.routes import blueprints
 
     return app
