@@ -59,6 +59,9 @@ def create_app():
     from scripts.manage_startlist import manage_startlist
     app.cli.add_command(manage_startlist)
 
+    from scripts.change_rider_id import change_rider_id
+    app.cli.add_command(change_rider_id)
+
     from app.routes import blueprints
 
     return app
