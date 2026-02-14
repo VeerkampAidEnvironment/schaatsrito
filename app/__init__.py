@@ -65,6 +65,9 @@ def create_app():
     from scripts.reassign_rider import reassign_rider
     app.cli.add_command(reassign_rider)
 
+    from scripts.remove_provisional_bulk import remove_provisional_bulk
+    app.cli.add_command(remove_provisional_bulk)
+
     from app.routes import blueprints
 
     return app
